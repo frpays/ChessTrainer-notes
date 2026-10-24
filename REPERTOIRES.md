@@ -135,8 +135,13 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
   stops in the middle of an exchange; the cost, a coverage a little too low while that move is unknown, is
   accepted (2026-10-24, Codex review).
 - **The end of a training line says how the study goes on**, in its last comment, where the study goes
-  further: "In the study: 7.Nf3 (7.Nb3 Be7 =) (7.Nf5 d5 =) 7...Be7 =", the study's lines in full up to
-  three variations, else its main line and the first move of the others. Only the trainer shows it.
+  further: "7.Nf3 (7.Nb3 Be7 =) (7.Nf5 d5 =) 7...Be7 =", the study's lines in full up to three
+  variations, else its main line and the first move of the others. Only the trainer shows it. The label
+  "In the study:" went (2026-10-24, my choice): the moves alone.
+- **A move that sets traps names them** (2026-10-24, 8.Neg5 in the Rubinstein): where the training leaves
+  out opponent mistakes (?, ??) the study refutes, my move before them gets them in its comment, each with
+  the study's main line: "(8...h6? 9.Nxe6 fxe6 10.Bg6+ Kf8 11.Qxe6 +−)". They are seen, not learned; at
+  the first count, 47 of my moves over all the trainings.
 - **Stable**: a cut and the trainer compare the same rounded numbers (`reach.DIGITS`), so a position at the
   limit is in both or in neither, and `rep cut` run twice writes the same files (2026-10-24: a rounding
   mismatch had cut 8...Nc6 in the Rubinstein while counting it as known).

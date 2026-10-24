@@ -145,6 +145,9 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
   larger tree.
 - Najdorf (2026-10-24): at 80%, 50 of 177 lines and 120 of my 468 moves, the positions reached by 0.46% of
   club games or more; at 90%, 69 lines and 184 moves.
+- Caro-Kann (2026-10-24, my choice): study 100 (the whole repertoire, 171 lines and 440 moves of mine, on
+  Lichess) and training 90 (71 lines, 191 moves, positions reached by 0.21% of club games or more). Going
+  from 80 to 90 kept every move of the training and added 71.
 
 ## Publishing and freezing
 

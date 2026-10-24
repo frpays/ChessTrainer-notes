@@ -88,7 +88,7 @@ tolerance was proposed and set aside.
 
 The whole study (`<study>.pgn`) is the repertoire as drafted, about the size of an advanced club player's
 repertoire: too much to learn at once (2026-10-24). Two sizes cut it, set per study in its spec, with
-defaults in `repertoire/style.yaml` (both 100 for now): `study_size`, the part published on Lichess
+defaults in `repertoire/style.yaml` (90 and 80): `study_size`, the part published on Lichess
 (`<study>.study.pgn`), and `training_size`, the part the trainer serves (`<study>.training.pgn`), never
 larger. A size is the share of the study's club games in which I know all my moves, the scale of the
 trainer's learning goal. `rep view` writes the cuts; `rep draft` and `rep refresh` run it after them.
@@ -101,6 +101,12 @@ trainer's learning goal. `rep view` writes the cuts; `rep draft` and `rep refres
 - **It does not show**: a cut line ends on my move, plays on through a forced sequence like any line end
   (with the whole study's moves) and gets its eval, so on Lichess and in the trainer it looks like a whole
   line. The trainer says "to move N" only for a goal below the training's size.
+- **The end of a training line says how the study goes on**, in its last comment, where the study goes
+  further: "In the study: 7.Nf3 (7.Nb3 Be7 =) (7.Nf5 d5 =) 7...Be7 =", the study's lines in full up to
+  three variations, else its main line and the first move of the others. Only the trainer shows it.
+- **Stable**: a cut and the trainer compare the same rounded numbers (`reach.DIGITS`), so a position at the
+  limit is in both or in neither, and `rep view` run twice writes the same files (2026-10-24: a rounding
+  mismatch had cut 8...Nc6 in the Rubinstein while counting it as known).
 - **Growing keeps my choices**: raising a size brings lines of the whole study back as they are, without a
   draft. A deeper draft of the whole study makes a cut of the same size a little larger: it is a share of a
   larger tree.

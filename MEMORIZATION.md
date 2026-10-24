@@ -102,7 +102,8 @@ is divided by the share of its games its chapters keep, so that a repertoire nev
 
 ## The review log, to measure
 
-Since 2026-10-23, `data/trainer/reviews.csv` records every move I am asked for:
+Since 2026-10-23, `data/trainer/reviews.csv` records every move I answer, once I have played it (a prompt left
+unanswered leaves no row):
 
 ```
 time,position,move,result,mode,box,line,study
@@ -112,7 +113,9 @@ time,position,move,result,mode,box,line,study
 `result` is `found`, `missed` or `hint`; `mode` is `context`, `learn`, `quiz`, `review` or `test`; `box`
 is the box before the answer (empty for a new move); `study` is the repertoire (its file), named before the
 three words of [REPERTOIRES.md](REPERTOIRES.md). The progress keeps the state; the log keeps the
-history. Appended only; backed up with the progress.
+history. Appended only; backed up with the progress. A batch whose reply from the server is lost is sent
+again, so a row can come twice: the time (to the second), the position and the move identify an answer, and
+duplicates are dropped when measuring.
 
 ## Next
 

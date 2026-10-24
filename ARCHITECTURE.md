@@ -63,8 +63,10 @@ single-page app.
 | `GET, POST /settings` | `data/trainer/settings.yaml`, validated, with the defaults |
 | `POST /reviews` | appends answers to `data/trainer/reviews.csv` |
 
-The browser keeps unsaved progress and answers in local storage and sends them in batches, so a lost
-connection costs nothing. Static files are served with `no-cache`: a phone always gets the current page.
+The browser keeps unsaved progress and answers in local storage and sends them in batches, one at a time
+(a batch never overtakes the one before it), so a lost connection costs nothing. The files the server reads
+(PGN files, `starts.json`, progress, settings) are written atomically (`config.write_atomic`): a request
+during `rep cut` or a draft never reads half a file. Static files are served with `no-cache`: a phone always gets the current page.
 
 ## Infrastructure
 

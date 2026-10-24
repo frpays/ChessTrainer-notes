@@ -81,15 +81,18 @@ after ...Bb7 in the Rubinstein). Such choices go into the spec.
 
 ## The main line
 
-At the opponent's nodes the main line goes on with the most played **sound** reply (the best defence if it
-is the only one), then come the traps (`?`/`??`), then the pointers (transpositions, other repertoires). A main
-line never continues with a blunder (2026-10-23, Bronstein-Larsen 12...Qc7??), and a reply that only
-transposes is never the main line, even when it is the most played.
+At the opponent's nodes the main line goes on with the most played reply that is not a mistake (the best
+defence if it is the only one), then come the traps (`?`/`??`), then the pointers (transpositions, other
+repertoires). A main line never continues with a blunder (2026-10-23, Bronstein-Larsen 12...Qc7??), and a reply
+that only transposes is never the main line, even when it is the most played. An inaccuracy (5 to 10 points)
+club players often choose stays the main line: it is the one met over the board (2026-10-24, kept after the
+Codex review rather than reordering every repertoire).
 
 ## Where a line ends
 
 - **Always on my move**, the one to memorise; never on the opponent's move with "Next: ..." in a comment.
-  Only lines covered in another repertoire may end on the opponent's move.
+  Only lines that go on elsewhere may end on the opponent's move: in another repertoire, or in another
+  chapter ("has its own chapter").
 - **Never in the middle of an exchange**: at the end of a line, the opponent's best reply is played on, with
   my answer, while it is a capture or a check that threatens something. A quiet threat counts when passing
   would cost a mistake's worth; a check, when my second best answer would (2026-10-23: spite checks such as
@@ -108,7 +111,8 @@ tolerance was proposed and set aside.
   moves shown. Only mistakes are marked; no "!" on an obvious recapture.
 - Published studies carry no statistics and no centipawns: the standard symbols (=, ⩲, ±, +−) on the last
   move of a line, and words such as "Mating attack" (`repertoire/style.yaml`, applied at push; the PGN files
-  keep everything).
+  keep everything). Notes written in the spec say it in words too: "a common accident in club games", not
+  "White scores 76%" (2026-10-24: five notes of the Najdorf and the other second moves still had figures).
 
 ## Sizes: the study and the training
 
@@ -126,7 +130,10 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
   What a node needs (the highest reach below it) never grows along a line, so a cut is a clean subtree.
 - **It does not show**: a cut line ends on my move, plays on through a forced sequence like any line end
   (with the repertoire's moves) and gets its eval, so on Lichess and in the trainer it looks like a whole
-  line. The trainer says "to move N" only for a goal below the training's size.
+  line. The trainer says "to move N" only for a goal below the training's size. The forced reply counts as
+  played (its club share stays out), so that the move after it is learned with the line and a goal never
+  stops in the middle of an exchange; the cost, a coverage a little too low while that move is unknown, is
+  accepted (2026-10-24, Codex review).
 - **The end of a training line says how the study goes on**, in its last comment, where the study goes
   further: "In the study: 7.Nf3 (7.Nb3 Be7 =) (7.Nf5 d5 =) 7...Be7 =", the study's lines in full up to
   three variations, else its main line and the first move of the others. Only the trainer shows it.

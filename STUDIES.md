@@ -1,0 +1,95 @@
+# Studies
+
+How a study is built from its spec, the rules the builder follows and why, and how studies are annotated,
+published and frozen. Code: `tools/src/repertoire/build.py` (the builder), `forced.py` (line ends),
+`style.py` (published look), `spec.py`. The commands are in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Winning chances, not centipawns
+
+Every comparison is made in winning chances, with the Lichess curve
+`win% = 50 + 50·(2 / (1 + exp(−0.00368208·cp)) − 1)`. Two evals are compared as `Δp = p2 − p1`, never as
+`cp2 − cp1`; to speak in centipawns, `Δp` is converted back to the eval that gives `50 + Δp` ("neutral
+cp"). Three thresholds, in points of winning chances: inaccuracy 5 (the tolerance), mistake 10, blunder 15.
+Rules are general, not tuned case by case.
+
+## The spec
+
+`repertoire/<colour>/<study>.spec`:
+
+- **Header**: `color`, `start` (the moves to the study's first position), `study` (its title), `max_ply`,
+  `min_reach` (a line is followed while this share of club games reaches it: 5%, 2% for the
+  Scandinavian), `min_games`, and switches: `prefer_habits`, `punish_tricks`, `tolerance`, `floor_cp`.
+- **[policy]**: my imposed moves, as move sequences. Never overridden.
+- **[chapters]**: move prefixes and chapter names; the rest goes to "Other lines".
+- **[notes]**: plan notes placed on a move; **[intro]**: the Overview chapter; **[exclude]**: lines covered
+  elsewhere; **[models]**: model games for the plans.
+
+## Opponent moves
+
+- The club replies (Lichess explorer, 1800-2200, blitz and rapid) above the reach and game thresholds.
+- The **best defence**, even if rare.
+- **Traps** (`punish_tricks`): dubious replies that still score well for the opponent, followed down to 1%
+  of games, and "dangerous" replies against which I score far below average.
+- Mistakes are marked `?`/`??` with their refutation. Several mistakes refuted the same way are generic:
+  one example and the safe move, never the whole list.
+
+## My moves
+
+At each of my positions, in order:
+
+1. the spec's move;
+2. the frozen move (`.lock`), unless a sound move transposes more directly into the study;
+3. otherwise a **sound** move (within the tolerance of the best, and not below `floor_cp`), preferring:
+   - one that **transposes** into a position the study already covers, at once or after the opponent's most
+     played reply, so that no position is learned by two roads. `rep draft` builds twice so that the second
+     pass knows the whole tree. No exception for a small material gain: a pawn worth 17 cp in blitz is
+     initiative for the other side (2026-10-23);
+   - **my habit** (`prefer_habits`, at least 3 games of mine), so that a sound move I already play stays;
+   - the most **practical** move: how it does in club games and in 2500+ blitz.
+
+A spec move that blocks a transposition is kept; the builder says so.
+
+In the opening, Stockfish's preference within a small margin is not trusted over the natural, common move
+that keeps the system (2026-10-23: 4.d4 rather than 4.c4 in the Scandinavian, 8.Bg5 rather than 8.Neg5
+after ...Bb7 in the Rubinstein). Such choices go into the spec.
+
+## The main line
+
+At the opponent's nodes the main line goes on with the most played **sound** reply (the best defence if it
+is the only one), then come the traps (`?`/`??`), then the pointers (transpositions, other studies). A main
+line never continues with a blunder (2026-10-23, Bronstein-Larsen 12...Qc7??), and a reply that only
+transposes is never the main line, even when it is the most played.
+
+## Where a line ends
+
+- **Always on my move**, the one to memorise; never on the opponent's move with "Next: ..." in a comment.
+  Only lines covered in another study may end on the opponent's move.
+- **Never in the middle of an exchange**: at the end of a line, the opponent's best reply is played on, with
+  my answer, while it is a capture or a check that threatens something. A quiet threat counts when passing
+  would cost a mistake's worth; a check, when my second best answer would (2026-10-23: spite checks such as
+  8...Bb4+ 9.c3 are no longer shown).
+- **Stop once the result is clear**: no moves after a won position just to show it.
+
+Refutations show the engine's line until a material gain is visible (at most six plies), ending on my
+move. Known weakness (2026-10-23): the opponent's moves there follow Stockfish's principal variation, which
+can be unnatural (7...Bb4+ 8.c3 Nxd4); choosing instead the most played reply among those within the
+tolerance was proposed and set aside.
+
+## Annotations
+
+- Ideas and plans in words, a few moves on the board; no long variations in comments.
+- Speak like a player: "wins a piece", not "wins a bishop" after exchanges; claim only gains visible in the
+  moves shown. Only mistakes are marked; no "!" on an obvious recapture.
+- Published studies carry no statistics and no centipawns: the standard symbols (=, ⩲, ±, +−) on the last
+  move of a line, and words such as "Mating attack" (`repertoire/style.yaml`, applied at push; the PGN files
+  keep everything).
+
+## Publishing and freezing
+
+- `rep edits` before every push: it lists what was changed online since the last push. A push overwrites
+  online changes (a backup goes to `data/backups/`): explorations on the Lichess board are throwaway. To add
+  a line, play it on Lichess, say so, and it goes into the spec.
+- **Freeze** (`rep freeze`) once a study is validated: its moves go to the lock and later drafts keep them.
+  Studies under review stay unfrozen.
+- Regenerating an unfrozen, published study moves many of my moves (the caches hold deeper evals by then):
+  write a temporary lock from the published version, draft, then delete the lock.

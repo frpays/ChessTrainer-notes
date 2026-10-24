@@ -1,7 +1,7 @@
 # Notes
 
 The documentation of the chess repertoire project: how it is designed and why. The code lives in
-`../tools`, the studies in `../repertoire`; these notes explain what neither says on its own.
+`../tools`, the repertoires in `../repertoire`; these notes explain what neither says on its own.
 
 Start with [CONTENTS.md](CONTENTS.md), the table of contents.
 

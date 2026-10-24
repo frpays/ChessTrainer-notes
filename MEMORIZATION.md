@@ -13,8 +13,8 @@ rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - d2d4      (2.d4 in the 
 ```
 
 The position is a FEN without move counters (pieces, side to move, castling, en passant), the move is in
-UCI. The key does not depend on the line, the chapter or the study: positions reached by several move
-orders (transpositions) and moves shared by several studies (1.e4) are one item with one history. Lines
+UCI. The key does not depend on the line, the chapter or the repertoire: positions reached by several move
+orders (transpositions) and moves shared by several repertoires (1.e4) are one item with one history. Lines
 are only the way moves are presented.
 
 ## State of a move: Leitner boxes
@@ -48,9 +48,9 @@ coarse summary of a move's history. It decides *when* to review; it does not cla
   played from memory ("Play from memory"). Lines come skeleton first: in each chapter the main line, then
   the lines that leave it earliest. The learning goal (a slider on the home page) can restrict them to the
   positions club games reach most often: the moves on the way to the positions reached at least L times,
-  with the highest L that brings the opening to the goal, the way a study is cut to its sizes
-  ([STUDIES.md](STUDIES.md)) and on the same scale; a goal at the training's size or above asks for every
-  line. The games a cut leaves out count as games where I do not know my moves.
+  with the highest L that brings the opening to the goal, the way a repertoire is cut to its sizes
+  ([REPERTOIRES.md](REPERTOIRES.md)) and on the same scale; a goal at the training's size or above asks for
+  every line. The games a cut leaves out count as games where I do not know my moves.
 - **Review**: the lines owning a due move, the most overdue first, `review_lines` per session (20), played
   in tree order so that going from one line to the next is a short way back up the tree. A move shared by
   several lines (1.e4) is reviewed in one of them only, its owner: the first in tree order.
@@ -70,11 +70,11 @@ opponent's moves are played for me. Playing from memory, nothing gives an answer
 
 ## What I still remember: the Lines page
 
-The Lines page estimates, for every study, chapter and line, how likely a game falls into a line I no
+The Lines page estimates, for every repertoire, chapter and line, how likely a game falls into a line I no
 longer know, and sorts by it ("Priority first").
 
-**Reach** comes from club games (Lichess explorer, 1800-2200, blitz and rapid): a study's is how often club
-games of its colour enter it (`repertoire/starts.json`); a chapter's, its share of the study; a line's,
+**Reach** comes from club games (Lichess explorer, 1800-2200, blitz and rapid): a repertoire's is how often
+club games of its colour enter it (`repertoire/starts.json`); a chapter's, its share of the repertoire; a line's,
 its share of the chapter.
 
 **Memorized** is the chance that I still know a line, that of its weakest move. A move last played `t` ago
@@ -91,8 +91,8 @@ With boxes, a move just learned (box 1, `S` ≈ 9.5 days) falls to about 50% in 
 well learned as one found six times in a row, which is why the box model was added.
 
 **Priority** is reach times non-retention (1 − memorized). A chapter's non-retention is the sum of its
-lines' priorities; a study's, the sum of its chapters' priorities. The memorized figure of a study is
-divided by the share of its games its chapters keep, so that a study never learned shows 0%.
+lines' priorities; a repertoire's, the sum of its chapters' priorities. The memorized figure of a repertoire
+is divided by the share of its games its chapters keep, so that a repertoire never learned shows 0%.
 
 ## Limits
 
@@ -110,7 +110,8 @@ time,position,move,result,mode,box,line,study
 ```
 
 `result` is `found`, `missed` or `hint`; `mode` is `context`, `learn`, `quiz`, `review` or `test`; `box`
-is the box before the answer (empty for a new move). The progress keeps the state; the log keeps the
+is the box before the answer (empty for a new move); `study` is the repertoire (its file), named before the
+three words of [REPERTOIRES.md](REPERTOIRES.md). The progress keeps the state; the log keeps the
 history. Appended only; backed up with the progress.
 
 ## Next
@@ -122,8 +123,8 @@ history. Appended only; backed up with the progress.
 
 ## Dropped
 
-- **Priority by frequency drives the sessions** (2026-10-23): Learn ordered across studies by how often
+- **Priority by frequency drives the sessions** (2026-10-23): Learn ordered across repertoires by how often
   club games reach a move, reviews the most frequent first, a global learning goal. Rejected: the sessions
   stay as they were; priority only ranks and displays on the Lines page.
-- **Weighing studies by my own games** (2026-10-23): rejected; my games built the repertoire, they do not
+- **Weighing repertoires by my own games** (2026-10-23): rejected; my games built the repertoire, they do not
   weigh it. All probabilities come from club games.

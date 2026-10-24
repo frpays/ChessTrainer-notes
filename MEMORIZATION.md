@@ -47,7 +47,10 @@ coarse summary of a move's history. It decides *when* to review; it does not cla
 - **Learn**: new lines, `new_lines` per session (5). Each line is first shown, new moves with arrows, then
   played from memory ("Play from memory"). Lines come skeleton first: in each chapter the main line, then
   the lines that leave it earliest. The learning goal (a slider on the home page) can restrict them to the
-  positions club games reach most often.
+  positions club games reach most often: the moves on the way to the positions reached at least L times,
+  with the highest L that brings the opening to the goal, the way a study is cut to its sizes
+  ([STUDIES.md](STUDIES.md)) and on the same scale; a goal at the training's size or above asks for every
+  line. The games a cut leaves out count as games where I do not know my moves.
 - **Review**: the lines owning a due move, the most overdue first, `review_lines` per session (20), played
   in tree order so that going from one line to the next is a short way back up the tree. A move shared by
   several lines (1.e4) is reviewed in one of them only, its owner: the first in tree order.

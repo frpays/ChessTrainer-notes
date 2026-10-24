@@ -14,7 +14,8 @@ memory model, see [MEMORIZATION.md](MEMORIZATION.md).
 ```
 
 The PGN files of `repertoire/` are the source of truth: Lichess studies are published from them, the
-trainer reads them.
+trainer reads them, each cut to the size I chose (`<study>.study.pgn`, `<study>.training.pgn`; see
+[STUDIES.md](STUDIES.md)).
 
 ## The tools package
 
@@ -24,7 +25,7 @@ trainer reads them.
 |---|---|---|
 | Lichess and engine | `lichess.py`, `games.py`, `studies.py`, `explorer.py`, `engine.py` | API client; my games (`data/games/*.ndjson`); study exports; opening explorer (club and masters, cached forever in `data/cache/explorer.sqlite`); Stockfish evaluations (`data/cache/evals.sqlite`) |
 | Analysis of my games | `tree.py`, `report.py`, `mistakes.py`, `practical.py`, `ideas.py`, `models.py` | Move trees and statistics of my games; recurring losing moves; practical value of candidate moves; short ideas instead of long variations; model games for plans |
-| Building studies | `spec.py`, `build.py`, `forced.py`, `style.py`, `starts.py` | Spec files (my choices, chapters, notes) and locks; the builder; forced sequences at line ends; how comments look once published; how often club games reach each study |
+| Building studies | `spec.py`, `build.py`, `forced.py`, `style.py`, `starts.py`, `reach.py`, `view.py` | Spec files (my choices, chapters, notes) and locks; the builder; forced sequences at line ends; how comments look once published; how often club games reach each study, and each move of a study (the coverage of a set of moves); the cuts published and trained |
 | Publishing | `sync.py`, `export.py` | Push to Lichess studies, detect online edits; one-game-per-line export |
 | Trainer | `trainer.py`, `trainer/` | HTTP server; browser app (`app.js`, with chessground and chess.js vendored) |
 | Entry point | `cli.py`, `config.py` | `rep` commands; paths and tokens |
@@ -39,18 +40,21 @@ trainer reads them.
    5 points of winning chances of the best) that transposes, my habit (`prefer_habits`), or the most
    practical one. Forced sequences are played on at line ends. Output: `<study>.pgn`, and its entry in
    `starts.json`.
-3. **Publish** (`rep push <pgn>`): updates the Lichess study (ids in `studies.json`); `rep edits` first
-   shows what was changed online since the last push.
-4. **Freeze** (`rep freeze <spec>`): once I have validated a study, all my moves go to `<study>.lock`, so
-   that a later draft keeps them.
-5. **Refresh** (`rep refresh <pgn>`): applies newer rules to a study without a new draft.
+3. **Cut** (`rep view <spec>`, also run by draft and refresh): below a size of 100, writes the part
+   published (`<study>.study.pgn`) and the part trained (`<study>.training.pgn`).
+4. **Publish** (`rep push <pgn>`): updates the Lichess study (ids in `studies.json`) with the part
+   published; `rep edits` first shows what was changed online since the last push.
+5. **Freeze** (`rep freeze <spec>`): once I have validated a study, all my moves as published go to
+   `<study>.lock`, so that a later draft keeps them.
+6. **Refresh** (`rep refresh <pgn>`): applies newer rules to a study without a new draft.
 
 Drafts take minutes to hours: every new position costs an explorer request and a Stockfish evaluation;
 both are cached, so a second draft is fast.
 
 ## The trainer
 
-`rep serve` builds every line of every study from the PGN files and serves a single-page app.
+`rep serve` builds every line of every study from the PGN files (the part trained) and serves a
+single-page app.
 
 | Endpoint | |
 |---|---|

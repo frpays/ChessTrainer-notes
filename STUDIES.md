@@ -84,12 +84,39 @@ tolerance was proposed and set aside.
   move of a line, and words such as "Mating attack" (`repertoire/style.yaml`, applied at push; the PGN files
   keep everything).
 
+## Sizes: the study and the training
+
+The whole study (`<study>.pgn`) is the repertoire as drafted, about the size of an advanced club player's
+repertoire: too much to learn at once (2026-10-24). Two sizes cut it, set per study in its spec, with
+defaults in `repertoire/style.yaml` (both 100 for now): `study_size`, the part published on Lichess
+(`<study>.study.pgn`), and `training_size`, the part the trainer serves (`<study>.training.pgn`), never
+larger. A size is the share of the study's club games in which I know all my moves, the scale of the
+trainer's learning goal. `rep view` writes the cuts; `rep draft` and `rep refresh` run it after them.
+
+- **What a cut keeps**: the positions club games reach at least L times and the moves on the way to them,
+  with the highest L that brings the study to its size. A position's reach counts every move order: the
+  lines that transpose into it bring their games, so a frequent position stays even when the line that
+  develops it is rare (25 of the 102 transpositions had a pointing line more played than the developed one).
+  What a node needs (the highest reach below it) never grows along a line, so a cut is a clean subtree.
+- **It does not show**: a cut line ends on my move, plays on through a forced sequence like any line end
+  (with the whole study's moves) and gets its eval, so on Lichess and in the trainer it looks like a whole
+  line. The trainer says "to move N" only for a goal below the training's size.
+- **Growing keeps my choices**: raising a size brings lines of the whole study back as they are, without a
+  draft. A deeper draft of the whole study makes a cut of the same size a little larger: it is a share of a
+  larger tree.
+- Najdorf (2026-10-24): at 80%, 50 of 177 lines and 120 of my 468 moves, the positions reached by 0.46% of
+  club games or more; at 90%, 69 lines and 183 moves.
+
 ## Publishing and freezing
+
+- A push publishes the study cut to `study_size`; a chapter the cut leaves out stays online until a push
+  with `--prune`.
 
 - `rep edits` before every push: it lists what was changed online since the last push. A push overwrites
   online changes (a backup goes to `data/backups/`): explorations on the Lichess board are throwaway. To add
   a line, play it on Lichess, say so, and it goes into the spec.
-- **Freeze** (`rep freeze`) once a study is validated: its moves go to the lock and later drafts keep them.
-  Studies under review stay unfrozen.
+- **Freeze** (`rep freeze`) once a study is validated: its moves as published go to the lock and later
+  drafts keep them; the moves a cut leaves out stay free, I have not reviewed them. Studies under review
+  stay unfrozen.
 - Regenerating an unfrozen, published study moves many of my moves (the caches hold deeper evals by then):
   write a temporary lock from the published version, draft, then delete the lock.

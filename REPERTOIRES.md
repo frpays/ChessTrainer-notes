@@ -148,11 +148,14 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
 - **Growing keeps my choices**: raising a size brings lines of the repertoire back as they are, without a
   draft. A deeper draft of the repertoire makes a cut of the same size a little larger: it is a share of a
   larger tree.
-- Najdorf (2026-10-24): at 80%, 50 of 177 lines and 120 of my 468 moves, the positions reached by 0.46% of
-  club games or more; at 90%, 69 lines and 184 moves.
+- Najdorf (2026-10-24, redrafted with the depth rule): at 80%, 50 of 221 lines and 124 of my 707 moves, the
+  positions reached by 0.42% of club games or more; at 90%, 76 lines and 207 moves.
 - Caro-Kann (2026-10-24, my choice): study 100 (the whole repertoire, 171 lines and 440 moves of mine, on
   Lichess) and training 90 (71 lines, 191 moves, positions reached by 0.21% of club games or more). Going
   from 80 to 90 kept every move of the training and added 71.
+- Rubinstein (2026-10-24, my choice): study 100 (89 lines, 207 moves of mine) and training 90 (36 lines, 102
+  moves), so that the three replies to 7...b6 8.Neg5 that lose (8...Bb7?? 9.Nxf7, 8...O-O? 9.Nxh7, 8...h6??
+  9.Nxe6), now in the policy, are trained: they are the reason for 8.Neg5.
 
 ## Publishing and freezing
 

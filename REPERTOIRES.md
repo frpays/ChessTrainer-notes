@@ -71,6 +71,9 @@ At each of my positions, in order:
      pass knows the whole tree. No exception for a small material gain: a pawn worth 17 cp in blitz is
      initiative for the other side (2026-10-23);
    - **my habit** (`prefer_habits`, at least 3 games of mine), so that a sound move I already play stays;
+     among moves that transpose as directly, it comes first too (2026-10-24: in the Najdorf, 6.f3 e5 7.Nb3
+     Be6 had replaced Be7, my move in 83 games, because both transpose after 8.Be3 and the tie went to the
+     practical value);
    - the most **practical** move: how it does in club games and in 2500+ blitz.
 
 A spec move that blocks a transposition is kept; the builder says so.
@@ -148,8 +151,8 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
 - **Growing keeps my choices**: raising a size brings lines of the repertoire back as they are, without a
   draft. A deeper draft of the repertoire makes a cut of the same size a little larger: it is a share of a
   larger tree.
-- Najdorf (2026-10-24, redrafted with the depth rule): at 80%, 50 of 221 lines and 124 of my 707 moves, the
-  positions reached by 0.42% of club games or more; at 90%, 76 lines and 207 moves.
+- Najdorf (2026-10-24, redrafted free with the depth rule): at 80%, 50 of 219 lines and 124 of my 703
+  moves, the positions reached by 0.43% of club games or more; at 90%, 75 lines and 206 moves.
 - Caro-Kann (2026-10-24, my choice): study 100 (the whole repertoire, 171 lines and 440 moves of mine, on
   Lichess) and training 90 (71 lines, 191 moves, positions reached by 0.21% of club games or more). Going
   from 80 to 90 kept every move of the training and added 71.
@@ -170,8 +173,10 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
 - **Freeze** (`rep freeze`) once a study is validated: its moves as published go to the lock and later
   drafts keep them; the moves a cut leaves out stay free, I have not reviewed them. Repertoires under review
   stay unfrozen.
-- Regenerating an unfrozen, published repertoire moves many of my moves (the caches hold deeper evals by
-  then): write a temporary lock from the published version, draft, then delete the lock.
+- An unfrozen repertoire is redrafted free (2026-10-24, my choice): no temporary lock from the published
+  version, only the spec and my own games (`prefer_habits`). Many of my moves can change (the caches hold
+  deeper evals by then); the moves that changed are listed, with those I learned in the trainer, and I
+  validate them before anything is published.
 - `rep draft --no-lock` leaves the lock aside: every move not in the spec is chosen by the rules, which
   checks them on a frozen repertoire (2026-10-24, the Caro-Kann and the Rubinstein). The lock stays as it was
   until the next freeze.

@@ -30,18 +30,29 @@ Rules are general, not tuned case by case.
 `repertoire/<colour>/<name>.spec`:
 
 - **Header**: `color`, `start` (the moves to the repertoire's first position), `title` (the Lichess study's
-  name, also shown in the trainer), `max_ply`,
-  `min_reach` (a line is followed while this share of club games reaches it: 5%, 2% for the
-  Scandinavian), `min_games`, and switches: `prefer_habits`, `punish_tricks`, `tolerance`, `floor_cp`;
+  name, also shown in the trainer), `max_ply` (the depth: lines end there or once the game is decided),
+  `min_reach` (a reply is followed while this share of club games reaches it: 5%, 2% for the
+  Scandinavian), and switches: `prefer_habits`, `punish_tricks`, `tolerance`, `floor_cp`;
   `study_size` and `training_size` (see below).
-- **[policy]**: my imposed moves, as move sequences. Never overridden.
+- **[policy]**: my imposed moves, as move sequences. Never overridden; the opponent moves on the way are
+  always in the tree, played in club games or not.
 - **[chapters]**: move prefixes and chapter names; the rest goes to "Other lines".
 - **[notes]**: plan notes placed on a move; **[intro]**: the Overview chapter; **[exclude]**: lines covered
   elsewhere; **[models]**: model games for the plans.
 
 ## Opponent moves
 
-- The club replies (Lichess explorer, 1800-2200, blitz and rapid) above the reach and game thresholds.
+- The club replies (Lichess explorer, 1800-2200, blitz and rapid): at least 5% of the position's games and
+  `min_reach` of the chapter's, or the main reply, which is always followed.
+- **Shares are estimates** (2026-10-24): a reply's club games plus 50 games split equally between the replies
+  the engine finds sound (within 5 points of its best), over the position's games plus 50. Where club games
+  are plentiful little moves (at 2,000 games, a share by 2.5 points at most); after a rare move of mine they
+  thin out and the engine fills in, down to a position no club game reached, played on with the engine's
+  reply ("club 34%, unplayed"). The comments carry these shares, so the trainer, the cuts and the builder
+  count the same games.
+- **No line ends because club games are few** (2026-10-24): `min_games` is gone. It stopped half the lines
+  (500 games; 2,000 for the Rubinstein, by default), at move 7 or 8, and dropped policy lines below it
+  (Caro-Kann 11.Qh4); my own rare move was enough to end a line. `max_ply` and a decided game end them now.
 - The **best defence**, even if rare.
 - **Traps** (`punish_tricks`): dubious replies that still score well for the opponent, followed down to 1%
   of games, and "dangerous" replies against which I score far below average.
@@ -141,3 +152,6 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
   stay unfrozen.
 - Regenerating an unfrozen, published repertoire moves many of my moves (the caches hold deeper evals by
   then): write a temporary lock from the published version, draft, then delete the lock.
+- `rep draft --no-lock` leaves the lock aside: every move not in the spec is chosen by the rules, which
+  checks them on a frozen repertoire (2026-10-24, the Caro-Kann and the Rubinstein). The lock stays as it was
+  until the next freeze.

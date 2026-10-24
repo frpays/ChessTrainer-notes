@@ -35,8 +35,9 @@ training (`<name>.training.pgn`) is served by the trainer; see [REPERTOIRES.md](
 1. **Spec** (`repertoire/white/<name>.spec`): start position, thresholds, my imposed moves (`[policy]`),
    chapters, plan notes, intro.
 2. **Draft** (`rep draft <spec>`): the builder expands the tree from the start position. Opponent moves
-   come from the club explorer (above a reach threshold, plus the best defence and the traps that work in
-   club games); my moves are, in order, the spec's, the frozen ones (`.lock`), else a sound move (within
+   come from the club explorer (above a reach threshold, the engine filling in where club games are few,
+   plus the best defence and the traps that work in club games); my moves are, in order, the spec's, the
+   frozen ones (`.lock`, unless `--no-lock`), else a sound move (within
    5 points of winning chances of the best) that transposes, my habit (`prefer_habits`), or the most
    practical one. Forced sequences are played on at line ends. Output: `<name>.pgn`, and its entry in
    `starts.json`.

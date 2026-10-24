@@ -156,6 +156,8 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
 - Rubinstein (2026-10-24, my choice): study 100 (89 lines, 207 moves of mine) and training 90 (36 lines, 102
   moves), so that the three replies to 7...b6 8.Neg5 that lose (8...Bb7?? 9.Nxf7, 8...O-O? 9.Nxh7, 8...h6??
   9.Nxe6), now in the policy, are trained: they are the reason for 8.Neg5.
+- Kan-Taimanov (2026-10-24, my choice): study 100 (160 lines, 376 moves of mine), training 80 (44 lines,
+  111 moves).
 
 ## Publishing and freezing
 

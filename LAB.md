@@ -16,7 +16,8 @@ builder chooses each move locally, so it cannot find what my best repertoires ar
    preferring moves I already play and moves that transpose.
 3. **Deviation**: an inferior but sound move, not lost against the best defence, outside the opponents'
    knowledge and hard to play for an unprepared opponent: in the Caro-Kann, 6.h4 h6 7.N1e2, Nf4 and Ngh5
-   (7.Nh3 against 6...h5); in the French, the Neg5 lines. No limit in points below the best move. Then
+   (7.Nh3 against 6...h5); in the French, the Neg5 lines. A generous limit in points below the best move
+   (2026-10-26, at first none; see "Where to deviate"). Then
    every way of punishing the opponent's mistakes, until a calm, equal position.
 
 The phases are not strict: the Benoni is both a key choice and a deviation. The test zone is the whole
@@ -169,8 +170,9 @@ over a dozen moves within 2 points: depth 14 cannot tell them apart.
 
 ## Toward the builder: a proposal (2026-10-26, not decided)
 
-- The opponent: the club's moves where it has played, the small Lc0 network's policy elsewhere (in place
-  of the equal split between sound moves), blended as the builder's prior already does. The same model
+- The opponent (superseded the same day by the practical-model player, below): the club's moves where it
+  has played, the small Lc0 network's policy elsewhere (in place of the equal split between sound moves),
+  blended as the builder's prior already does. The same model
   serves both choices: my moves (the expectimax) and the opponent moves the repertoire covers. A small
   bias: where both exist, the club is a little less accurate than the policy (0.906 against 0.922), so
   the blend slightly favors popular lines over rare deviations; a policy temperature can correct it.
@@ -182,6 +184,62 @@ over a dozen moves within 2 points: depth 14 cannot tell them apart.
   the ones to train first.
 - The cost: about ten minutes per candidate move at k = 5 on the M2, shared between moves through the
   caches; a whole repertoire needs the search to share its subtrees, not one search per decision.
+
+## Where to deviate (2026-10-26, agreed)
+
+Two questions remain: where to leave the main lines (playing them to the end of theory is not in my
+interest), and which opponent moves the repertoire keeps. This section answers the first. The Caro-Kann
+shows what a good deviation is: 7.N1e2 and 7.Nh3 score better than elsewhere, and they are not bad lines,
+only slightly inferior and playable.
+
+- **Constraints**, on every one of my repertoire moves, not only the deviation:
+  - relative: at most δ points below the best move, with a generous δ (8 proposed; 6.Neg5 costs 4.4);
+  - absolute: never lost against the best player. Stockfish's eval stays above a floor (45% proposed,
+    about -0.5 pawn; nearer 40% as Black), at depth 20 or more since it is a safety constraint. The floor
+    bounds the sum of small concessions.
+- **Objective**: the expected result against the practical-model opponent (below), as in `lab/scout.py`,
+  times my own reach p (the objective probability below, from the opponent's branching): a deviation
+  early in a frequent line pays in more games.
+- **My own intuition**: out of my repertoire I am modelled by the same practical-model player (my p is
+  low there, so I play close to intuition): a line whose natural moves are good for me scores higher with
+  no extra weight. Cheaper fallback: my instinct index at the end of the line.
+- **Horizon**, until the second question is answered: five of my repertoire moves, then three moves each
+  played by the model, then Stockfish.
+
+## The practical-model player (2026-10-26, agreed)
+
+The club's shares are the natural opponent, but they get noisy as games become few. My proposal, with the
+adjustments agreed the same day:
+
+- **Objective probability p of a node**, for the side to move: the probability that a player with a fixed
+  repertoire reaches it, from the other side's branching probabilities only (his own moves count as 1).
+  Summed over the move orders, not one path: some positions with 200 club games or more have a path
+  product of 1e-9, reached by another order. Computed by propagation from the root, like the builder's
+  reach. On the 764 validation positions whose ancestors are all cached, log10 p spans -9 to 0, median
+  -3.2.
+- **The practical-model player**, set by p; two forms to compare:
+  - arithmetic (my proposal): α·perfect + (1-α)·intuitive;
+  - geometric: p(m) ∝ intuitive(m)·exp(-β·loss(m)), intuition filtered by knowledge or calculation. It
+    never gives mass to a move nobody thinks of (after Caro-Kann 6.h4 h6 the perfect player gives a4 4%
+    and Rh3 3%), and it needs Stockfish on the natural moves only.
+
+  In both, α or β = σ(K1 + K2·log p): in log p, since p spans orders of magnitude. Plus a temperature on
+  the intuitive part: the club is a little less accurate than the policy (0.906 against 0.922).
+- **Blend with the observed player**: α'·practical + (1-α')·practical-model, with α' = n/(N+n) and n the
+  club games. It is a smooth transition from the well-observed practical player to the model, which comes
+  close to the intuitive player as p falls.
+- **p'**: p computed with this blended player at every node (each branching probability smoothed, then
+  multiplied). It equals p where games are plentiful and is never zero deep down. Chosen over
+  p'' = α'p + (1-α')p', which mixes whole products with the last node's α'. One pass from the root: each
+  node depends on its ancestors only.
+- **The fit**: maximum likelihood of the club's moves weighted by games (cross-entropy), checked on
+  held-out positions with many games (the test zone and the validation set). It gives K1, K2, the
+  temperature, and which form wins. N the same way: subsample the games of rich positions and find the N
+  that best recovers the full shares. From the caches only (no Lichess query); Stockfish only for missing
+  natural moves.
+
+Next: the fit (`lab/practical.py`), then the player and the constraints in `lab/scout.py`. After that,
+the second question: which opponent moves the repertoire keeps.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

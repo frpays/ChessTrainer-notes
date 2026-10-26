@@ -370,6 +370,45 @@ moves it plays Stockfish's best with probability ζ, 0 by default (`ScoutParamet
   go there). No engine work more: the best move is among the judged ones. The floor stays, an absolute
   guarantee that also covers the shallow depth-14 evals.
 
+## The backbone and its decision points (2026-10-26, agreed)
+
+A deviation lies on a main axis of the opening, and early: 7.N1e2 comes at move 7. So a builder's first pass
+finds the backbone, and searches for deviations only at its decision points; the rest of the tree is cheap.
+
+- **The backbone** (my proposal): my moves fixed, the opponent's every club move with n/Nt at or above a
+  threshold, n the games of the position in the club band (1800-2499, blitz and rapid), Nt all the band's
+  games (1,510,337,517). The threshold bounds the nodes, not the candidates: a candidate deviation may never
+  have been played. My fixed moves come from the masters where they have enough games, then 2500+ blitz,
+  then my habit or Stockfish; whether the masters add anything is open. Stockfish could draw the backbone
+  instead.
+- **A decision point** is one of my positions on the backbone. Its threshold has a meaning: a node holding a
+  share s of the opening's games adds at most s times the deviation's gain to the repertoire's score. After
+  3.Nc3 in the Caro-Kann (7.5e-3 of Nt), a node at 1e-4 holds 1.3% of the games: a deviation gaining 10
+  points there adds 0.13 points.
+- **How many**, my positions counted over the explorer's cache. "Every" follows every club move of mine;
+  "one" follows mine (here the club's most played, not yet my own moves). In brackets: positions above the
+  threshold the cache lacks, their subtrees uncounted.
+
+| Start | Games | 1e-4 every / one | 3e-5 every / one | 1e-5 every / one |
+|---|---|---|---|---|
+| Caro-Kann (White), 3.Nc3 | 11.4M | 52 (6) / 29 | 159 (34) / 61 (4) | 379 (185) / 94 (30) |
+| French Rubinstein (White), 4.Nxe4 | 4.6M | 18 / 14 | 53 / 31 (2) | 94 (76) / 47 (24) |
+| Sicilian 2...e6 (White), 4.Nxd4 | 13.6M | 43 (19) / 27 (6) | 107 (120) / 44 (32) | 181 (333) / 54 (64) |
+| Najdorf (White), 5...a6 | 13.1M | 40 (3) / 9 | 108 (45) / 20 (7) | 219 (191) / 30 (22) |
+| Najdorf (Black), 5...a6 | 13.1M | 37 (3) / 31 (1) | 80 (45) / 60 (14) | 161 (191) / 93 (55) |
+
+- **At 1e-4 they look alike**: 9 to 31 points, down to moves 8 to 12. Fixing my moves shrinks the count as
+  White, 1.3 to 4.4 times at 1e-4 and more below. As Black it barely shrinks (37 to 31): the opponent's many
+  sixth moves are the branching, each with many games.
+- **Below, the Sicilians diverge**: the cache was filled for the test zone (the Caro-Kann and the French) and
+  holds only what the drafts asked of the Sicilians. At 1e-5 the Sicilian 2...e6 lacks more positions than it
+  has; the Najdorf as Black is probably above 150. Filling the gaps costs a few hundred to a few thousand
+  requests, under an hour.
+- **The cost**: about 35,000 nodes per decision point (an estimate, before the first VM run measures it), and
+  about a million nodes a night on 32 vCPUs. At 1e-4 a night per repertoire; at 3e-5 two to three, more for
+  the Sicilians. The budget is under 10 hours of caching per repertoire, with room in the Caro-Kann and the
+  Rubinstein, since the Sicilians are the real test: the target is in [ROADMAP.md](ROADMAP.md), phase 4.
+
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 
 Rare but sound White tries the lab should find, or explain why not:

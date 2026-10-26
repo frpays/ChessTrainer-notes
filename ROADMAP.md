@@ -58,6 +58,17 @@ position (a receding horizon: near the horizon the scout's later moves are decid
 overlap and share their evals through the caches); at each of the opponent's, the replies kept and where the
 line ends (phase 3).
 
+Its first pass finds the backbone and its decision points exactly (2026-10-26, agreed; [LAB.md](LAB.md), "The
+backbone"): my moves fixed, the opponent's club moves above a threshold in n/Nt. The deviations are searched at
+the decision points only, the rest of the subtree cheaply. Fixing moves first shrinks the count, and the
+threshold can then go lower. The target: the Caro-Kann after 3.Nc3 at 3e-5 (some 60 decision points) cached in
+under three hours on the VM, so that the Najdorf as Black, the hardest, fits in ten. At the estimated 35,000
+nodes a point and a million a night on 32 vCPUs, that is about a factor 7: a larger spot VM for the same
+vCPU-hours (once the search runs in parallel, the time divides by the vCPUs, about 3.5 from 32 to 112), and
+cheaper nodes, each lever measured against the scout's value as `branch` was (depth 12 past my horizon, fewer
+judged moves, a short horizon to sort the candidates before the full one), and the searches of a decision point
+sharing the subtrees of the next ones. The first VM run measures the nodes per candidate first.
+
 The risk is the cost: hours per candidate move at the full horizon on the Mac with the practical-model player
 (the ten minutes of the first prototype are past), Stockfish taking 94% of the CPU, Python 4.5% and Lc0 2.4%
 (the scouts on the VM, 2026-10-26). The plan (2026-10-26, agreed), after the first results of the scout:
@@ -78,7 +89,8 @@ The risk is the cost: hours per candidate move at the full horizon on the Mac wi
    queue.
 4. **Then Python is the bottleneck**: about 1.3 cores for 30 engines, in one process. SQLite writes in one
    transaction per batch, lighter handling of moves, a level's expansion over two processes if needed; Lc0 in
-   true batches if it ever limits (through UCI, one position per call).
+   true batches if it ever limits (through UCI, one position per call; its Python bindings batch, 17 times
+   faster on Metal: [LAB.md](LAB.md), "Engines").
 
 ## 5. Redoing the repertoires, one at a time
 

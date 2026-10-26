@@ -277,6 +277,23 @@ workers). Mean cross-entropy on the test zone, in bits per move (the club's own 
 Next: the player and the constraints in `lab/scout.py` (rewritten 2026-10-26, the level-free version in
 the history). After that, the second question: which opponent moves the repertoire keeps.
 
+### The scout's breadth (2026-10-26)
+
+Past my horizon, a move of either side less likely than `model_branch` counts at its eval. Its value,
+measured on 7.N1e2 after Caro-Kann 6.h4 h6, one move of mine then three each by the model, settles
+around 0.07, the default since:
+
+| model_branch | 0.3 | 0.2 | 0.15 | 0.1 | 0.07 | 0.05 | 0.03 | 0.02 |
+|---|---|---|---|---|---|---|---|---|
+| Value (%) | 52.4 | 52.9 | 53.3 | 54.0 | 54.1 | 54.3 | 54.2 | 54.3 |
+| Nodes | 19 | 27 | 36 | 50 | 67 | 108 | 247 | 393 |
+
+A cut too coarse undervalues the line by two points: the replies it drops are the opponent's mistakes.
+My moves to the horizon cost the most (13, 61, 201 and 636 nodes for two to five of them, the model
+phase cut), about 22 nodes per position the model phase starts from: some 11,000 nodes, 3.5 to 7 hours,
+for one candidate at the full horizon on the Mac. `branch`, the same cut within my horizon (0.15), is
+measured next.
+
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 
 Rare but sound White tries the lab should find, or explain why not:

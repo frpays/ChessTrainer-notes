@@ -77,3 +77,5 @@ with 2...e6, and the rest may change freely.
   (Stockfish on 6 threads, a deeper eval replacing one a run already used); from the same copy, the
   restructured code matched the original on every output (2026-10-26).
 - A lab module moves to classes when it is touched.
+- No variables at module level (2026-10-26, `tools/CLAUDE.md`): done in the package and in the lab
+  modules of the fit and the scout; `tests/test_layout.py` lists the lab modules still to convert.

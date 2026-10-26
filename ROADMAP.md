@@ -63,9 +63,9 @@ An unchanged move keeps its progress, which is kept by position and move ([MEMOR
   restructured code matched the original on every output (2026-10-26).
 - A lab module moves to classes when it is touched.
 
-## Open
+## Decided, and open
 
-- During the redesign, keep learning new lines of the current repertoires, or only review them? A move
+- During the redesign I keep learning new lines of the current repertoires (2026-10-26), though a move
   learned now may change.
 - The drafts never committed (Italian, Benoni, White Najdorf, the Scandinavian's changes): their specs as a
   starting point and their trees dropped?

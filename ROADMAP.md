@@ -29,9 +29,14 @@ computed for the 13,866 that lacked them (Stockfish on a spot VM): the arithmeti
 ## 2. Where to deviate (lab)
 
 The player and the constraints in `lab/scout.py`: at most δ = 8 points below the best move, a floor of 45%
-(about 40% as Black) at depth 20 or more, a horizon of five of my moves then three of the model's. Accepted
-when, on the test zone, it finds by itself 7.N1e2 and 7.Nh3 with the Nh5 cluster (Caro-Kann 6.h4 h6), 6.Neg5
-(Fort Knox) and 8.Neg5 (Rubinstein 7...b6).
+(about 40% as Black) at depth 20 or more, a horizon of five of my moves then three of the model's. My
+candidates are the policy's likeliest moves (up to 95%) and Stockfish's best; at equal value (within a
+point) the more natural one, easier to remember and the one I play if I forget (2026-10-26).
+
+Accepted when, in three positions of the test zone, the scout given no candidate ranks first 7.N1e2 and 7.Nh3
+with the Nh5 cluster (Caro-Kann 6.h4 h6), 6.Neg5 (Fort Knox 5...Bc6) and 8.Neg5 (Rubinstein 7...b6), or ranks
+above them a move that holds up when I examine it (a better deviation is a find, not a failure). Then the
+scan: my positions along the test zone's lines, the deviations ranked by their gain times my p.
 
 ## 3. Which opponent moves, and where lines end (lab)
 

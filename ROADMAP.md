@@ -7,7 +7,7 @@ until their replacements are validated.
 ## 0. Before redoing anything (first, 2026-10-26)
 
 - **Back up the Mac's `data/`** to the GCS bucket: the caches (hours of Stockfish and explorer queries), the
-  games and the lab's results, not backed up since 2026-10-22. Never the Mac's `data/trainer`: robin's
+  games and the lab's results (done 2026-10-26, `tools/data-sync push` of each folder but `data/trainer`). Never the Mac's `data/trainer`: robin's
   progress is the real one, already pushed every 30 minutes ([ARCHITECTURE.md](ARCHITECTURE.md)).
 - **`rep push` keeps the state of `studies.json` when a push fails halfway**: every study will be pushed again.
 - **The club band**: the explorer's `1800,2000,2200` covers 1800 to 2499, each Lichess bucket running to the

@@ -305,10 +305,10 @@ higher on 7.N1e2):
 | Fort Knox 6.Neg5, value (%) | 61.3 | 73.9 | 75.4 | 76.4 | 76.7 |
 | nodes | 1 | 64 | 139 | 172 | 243 |
 
-On 7.N1e2 it moves by half a point at most; not on 6.Neg5, where each rarer reply followed is one more mistake: 2.8 points
-from 0.15 to 0.03. 0.15 stays for now; where the traps are, it undervalues them a little. `my_choices`, the
-same way: 7.N1e2 53.6, 53.6 and 54.2 for 3, 4 and 5 (59, 87 and 114 nodes), 6.Neg5 73.9 for all three (76, 90
-and 104 nodes): 3 stays.
+On 7.N1e2 it moves by half a point at most; not on 6.Neg5, where each rarer reply followed is one more
+mistake: 2.8 points from 0.15 to 0.03. 0.15 stays for now; where the traps are, it undervalues them a little.
+`my_choices`, the same way: 7.N1e2 53.6, 53.6 and 54.2 for 3, 4 and 5 (59, 87 and 114 nodes), 6.Neg5 73.9 for
+all three (76, 90 and 104 nodes): 3 stays.
 
 The club's own scores (the explorer cache, 1800-2499, blitz and rapid, the mover's score) agree with my moves:
 6.Neg5 63.6% (7,692 games) against 6.Bd3 50.7%; 7.Nh3 58.3% and 7.N1e2 58.2% against 7.Nf3 54.5% and 7.h5
@@ -338,10 +338,10 @@ depth (`DepthEvaluator` in `lab/scout.py`): a move is priced at exactly the dept
 position after it at 13), a floor at exactly 20, and the first eval at a depth stays. Each time it opens, it
 takes in the package's evals at their own depths (305,000 rows in 0.6 s); a position whose shallow eval was
 overwritten is searched again. The floors go to the package's cache too, never replacing a deeper eval: `rep`
-searches at 20 as well. Scouts run on a cloud VM, each with its own copy of the caches (one SQLite file shared by
-20 processes would wait on its locks), are merged back on the Mac: `lab.scout --merge` for the caches by
-depth, `lab.player --merge` and `--merge-policies` for the others. The first VM run (2026-10-26) predates it: its values carry this noise, and a
-gap under a point between two candidates decides nothing.
+searches at 20 as well. Scouts run on a cloud VM, each with its own copy of the caches (one SQLite file shared
+by 20 processes would wait on its locks), are merged back on the Mac: `lab.scout --merge` for the caches by
+depth, `lab.player --merge` and `--merge-policies` for the others. The first VM run (2026-10-26) predates it:
+its values carry this noise, and a gap under a point between two candidates decides nothing.
 
 ### ζ: how principled the repertoire is (2026-10-26, my proposal, agreed)
 

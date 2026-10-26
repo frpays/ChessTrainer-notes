@@ -193,7 +193,8 @@ shows what a good deviation is: 7.N1e2 and 7.Nh3 score better than elsewhere, an
 only slightly inferior and playable.
 
 - **Constraints**, on every one of my repertoire moves, not only the deviation:
-  - relative: at most δ points below the best move, with a generous δ (8 proposed; 6.Neg5 costs 4.4);
+  - relative: at most δ points below the best move, with a generous δ (8 proposed; 6.Neg5 costs 4.4).
+    Replaced the same day by ζ (below, "ζ"): δ, at 15 points, only bounds the search;
   - absolute: never lost against the best player. Stockfish's eval stays above a floor (45% proposed,
     about -0.5 pawn; nearer 40% as Black), at depth 20 or more since it is a safety constraint. The floor
     bounds the sum of small concessions.
@@ -293,6 +294,26 @@ My moves to the horizon cost the most (13, 61, 201 and 636 nodes for two to five
 phase cut), about 22 nodes per position the model phase starts from: some 11,000 nodes, 3.5 to 7 hours,
 for one candidate at the full horizon on the Mac. `branch`, the same cut within my horizon (0.15), is
 measured next.
+
+### ζ: how principled the repertoire is (2026-10-26, my proposal, agreed)
+
+δ had no theoretical ground, and 8 points is not generous. In its place, the opponent of the search is
+J_ζ = ζ·perfect + (1-ζ)·J, J the practical-model player blended with the club's shares: on each of his
+moves he plays Stockfish's best with probability ζ, 0 by default (`ScoutParameters.zeta`).
+
+- **The ground**: Huber's contamination model, the classic of robust decisions. I trust the model at 1 - ζ;
+  otherwise the opponent is the worst case for me, which in a zero-sum game is the perfect player. ζ is my
+  doubt about the model: a stronger opponent than the band, a prepared one, a model that overrates mistakes.
+- **The soft form of δ**: each point my move concedes against best play costs about ζ points of value. δ
+  forbade beyond a bound, ζ prices every point (the multiplier of the constraint). At ζ = 0.2, conceding 10
+  points pays only if the practical gain is above 2.
+- **Unlike α**: α only counts where the club has few games (its shares weigh 89% from 50 games); ζ applies
+  after the blend, so in the first moves too. ζ = 0 is the practical repertoire, ζ = 1 the engine's
+  (against best defence, to the horizon).
+- **In the search**: on the opponent's moves, in both phases, each move weighs (1-ζ)·q, Stockfish's best
+  ζ more, followed when its weight reaches `branch`; p still follows the practical player (how often games
+  go there). No engine work more: the best move is among the judged ones. The floor stays, an absolute
+  guarantee that also covers the shallow depth-14 evals.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

@@ -7,11 +7,13 @@ until their replacements are validated.
 ## 0. Before redoing anything (first, 2026-10-26)
 
 - **Back up the Mac's `data/`** to the GCS bucket: the caches (hours of Stockfish and explorer queries), the
-  games and the lab's results (done 2026-10-26, `tools/data-sync push` of each folder but `data/trainer`). Never the Mac's `data/trainer`: robin's
-  progress is the real one, already pushed every 30 minutes ([ARCHITECTURE.md](ARCHITECTURE.md)).
-- **`rep push` keeps the state of `studies.json` when a push fails halfway**: every study will be pushed again.
+  games and the lab's results. Done 2026-10-26, `tools/data-sync push` of each folder but `data/trainer`:
+  never the Mac's, since robin's progress is the real one, already pushed every 30 minutes
+  ([ARCHITECTURE.md](ARCHITECTURE.md)).
+- **`rep push` keeps the state of `studies.json` when a push fails halfway**, since every study will be
+  pushed again. Done 2026-10-26 (`StudyPush`, [REPERTOIRES.md](REPERTOIRES.md)).
 - **The club band**: the explorer's `1800,2000,2200` covers 1800 to 2499, each Lichess bucket running to the
-  next one. Kept (2026-10-26); the notes and the code that say 1800-2200 are corrected.
+  next one. Kept (2026-10-26); the notes and the code that said 1800-2200 are corrected.
 
 ## 1. The practical-model player (lab)
 

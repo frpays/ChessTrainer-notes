@@ -166,7 +166,8 @@ the trainer's learning goal. `rep cut` writes the cuts; `rep draft` and `rep ref
 ## Publishing and freezing
 
 - A push publishes the study, the repertoire cut to `study_size`; a chapter the cut leaves out stays online
-  until a push with `--prune`.
+  until a push with `--prune`. A push that fails halfway is simply run again (2026-10-26): `studies.json` is
+  saved after every change on Lichess, and the chapters already sent are not taken for online edits.
 
 - `rep edits` before every push: it lists what was changed online since the last push. A push overwrites
   online changes (a backup goes to `data/backups/`): explorations on the Lichess board are throwaway. To add

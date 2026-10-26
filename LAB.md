@@ -128,8 +128,8 @@ against the same blind opponent. Caro-Kann 6.h4 h6, k = 5 (about 10 minutes a mo
 10.O-O Bd6 11.Ngh5 O-O. My hand-built deviation and its Nh5 cluster come out by themselves once the
 search steers and looks five opponent moves ahead (at k = 3, all four are within 1.6 points).
 
-With `--club`, the opponent knows the theory where the club has played (club games plus 50 games' worth
-of the policy) and plays by intuition only off the beaten track: 7.Nf3 +8.9 (then 7...Nd7 8.Bf4, a
+With `--club`, the opponent plays the practical game where the club has played (club games plus 50 games'
+worth of the policy) and by intuition only off the beaten track: 7.Nf3 +8.9 (then 7...Nd7 8.Bf4, a
 sideline of its own), 7.Nh3 +6.1, 7.N1e2 +5.8, 7.h5 +0.9; after the knight moves, 7...e6 8.Nf4 Bh7 9.c3
 Nf6 10.Nfh5 Nbd7 11.Bc4. The two models agree on the Nh5 cluster and on 7.h5 being the least practical;
 they disagree on 7.Nf3, whose value comes from where the club actually goes wrong.
@@ -149,6 +149,23 @@ points, as 4.Bg5's price of -4.7 shows); 3 to 30 minutes a move:
   reconnaissance's 4.Qd3 does not stand out; 4.Ne2 (price 0.5) does, to be checked.
 - Classical 3...Nf6 (not in my repertoire): 4.Bg5 60.6, 4.exd5 58.0, 4.e5 56.9; after 4.Bg5 Be7 5.e5 Nfd7
   the search plays 6.h4, the reconnaissance's Alekhine-Chatard idea.
+
+## Three players (2026-10-26, my framing)
+
+Each is a move distribution, kept in the caches:
+
+1. Perfect: Stockfish. Its evals become a distribution through a softmax of the losses, in points of
+   winning chances: p(m) ∝ exp(-loss(m) / T), with T = 2 points, about the uncertainty of a depth-14 eval
+   (`lab/perfect.py`). `evals.sqlite` holds one eval per position: a move's is that of the position after.
+2. Practical: what the club plays (Lichess, blitz and rapid, 1800 to 2200). Not theory but a mixture:
+   players who analysed the position, who remember a move or more, who play by intuition at various levels
+   and thinking times. `explorer.sqlite` holds games, results and average rating for the 15 most played.
+3. Intuitive: the small Lc0 network's policy, with no level. It alone says whether a position is hard to
+   play, and whether a move is hard to remember. `policy.sqlite` holds the whole policy.
+
+Rubinstein 7...b6 8.Neg5, Black to move: perfect 8...Bb4+ 81%; practical 8...Bb7 50%, O-O 26%, h6 18%;
+intuitive O-O 46%, Bb7 26%, h6 18%. In a quiet position (Caro-Kann 6.h4 h6) the perfect player spreads
+over a dozen moves within 2 points: depth 14 cannot tell them apart.
 
 ## Toward the builder: a proposal (2026-10-26, not decided)
 

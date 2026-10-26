@@ -232,14 +232,49 @@ adjustments agreed the same day:
   multiplied). It equals p where games are plentiful and is never zero deep down. Chosen over
   p'' = α'p + (1-α')p', which mixes whole products with the last node's α'. One pass from the root: each
   node depends on its ancestors only.
-- **The fit**: maximum likelihood of the club's moves weighted by games (cross-entropy), checked on
-  held-out positions with many games (the test zone and the validation set). It gives K1, K2, the
-  temperature, and which form wins. N the same way: subsample the games of rich positions and find the N
-  that best recovers the full shares. From the caches only (no Lichess query); Stockfish only for missing
-  natural moves.
+- **The fit**: maximum likelihood of the club's moves (cross-entropy), checked on held-out positions with
+  many games (the test zone and the validation set). It gives K1, K2, the temperature, and which form
+  wins. N the same way: subsample the games of rich positions and find the N that best recovers the full
+  shares. Each position counts once, the score weighted by games given beside it: weighted by games, the
+  first moves alone would decide (1.5 billion games at the root, 200 deep down) (2026-10-26, agreed).
+  Stockfish only for missing natural moves.
+- **The gaps** (2026-10-26, agreed): the explorer cache lacks the positions where the spec set my move
+  (1.e4 c6 is missing, 1.e4 c6 2.d4 is there), and p needs the club's shares there: only 13,920 of the
+  27,594 cached club positions were reached, none of the test zone. Two estimates from the cache alone
+  failed. The shares from the next positions' games came out too high (median ×1.3, one move in ten ×4.5),
+  transpositions counting in. p from the position's own frequency, divided by my own shares, was off by a
+  factor of 10 in median beyond ply 12, the main move order not being the path's. So the explorer was
+  asked for the 1,940 missing positions on the paths to a position the fit can use (`lab.player --fill`,
+  cached for good): the one exception to "from the caches only".
 
-Next: the fit (`lab/practical.py`), then the player and the constraints in `lab/scout.py`. After that,
-the second question: which opponent moves the repertoire keeps.
+### First fit (2026-10-26, `lab/player.py`, `data/lab/player-fit.json`)
+
+1,828 positions with 200 club games or more, Lc0's policy and Stockfish on 95% of it: 785 to fit, 1,043
+held out in the test zone. log10 p runs from -6.3 to -0.5, median -2.5; 80% lie between -3.5 and -1.5.
+Mean cross-entropy on the test zone, in bits per move (the club's own entropy, the floor, is 1.45):
+
+| Player | Test | Fitted |
+|---|---|---|
+| Intuitive (the policy) | 2.217 | |
+| Intuitive, tempered | 2.200 | τ = 1.08 |
+| Perfect (T = 2) | 2.972 | |
+| Arithmetic, constant α | **2.138** | α = 0.25, T = 6.2 points, τ = 0.92 |
+| Arithmetic, α set by p | 2.138 | α 0.16 at p = 1 to 0.31 at 1e-4 |
+| Geometric, constant β | 2.166 | β = 0.052 per point, τ = 1.31 |
+| Geometric, β set by p | 2.166 | β 0.086 at p = 1 to 0.040 at 1e-4 |
+
+- **The arithmetic form wins**, by 0.03 bits. It takes 0.08 bits off the policy alone, a tenth of the way
+  to the floor.
+- **p is not detected**: K2 gains under 0.001 bits, in opposite directions in the two forms. The range is
+  too narrow: 36 test positions below 1e-4, where the model matters.
+- **N = 6.5 games**: past about ten games, the observed shares beat the model. The blend beats both
+  the shares alone and the model alone at every sample size, from 5 games to 200.
+- **What limits the data is the policy**: 12,914 positions reached have none. Taking positions of 30
+  games or more instead of 200 adds only 79.
+
+Next: the policy and Stockfish on the positions reached (phase 1, an engine job), to widen p downward and
+measure K2; then the player and the constraints in `lab/scout.py`. After that, the second question: which
+opponent moves the repertoire keeps.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

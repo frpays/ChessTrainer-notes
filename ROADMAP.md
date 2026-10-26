@@ -17,8 +17,14 @@ it (2026-10-26). The current repertoires stay in the trainer until their replace
 
 ## 1. The practical-model player (lab)
 
-The fit of [LAB.md](LAB.md), "The practical-model player", in `lab/practical.py`: p', the arithmetic or the
-geometric form, K1, K2, the temperature and N, by maximum likelihood on the caches (no Lichess query).
+The fit of [LAB.md](LAB.md), "The practical-model player", in `lab/player.py`: p', the arithmetic or the
+geometric form, K1, K2, the temperature and N, by maximum likelihood on the caches. One exception: the
+explorer was asked for the 1,940 positions the cache lacked on the way, where the spec set my move
+(2026-10-26, "The gaps" in LAB.md).
+
+First fit done 2026-10-26 ([LAB.md](LAB.md), "First fit"): the arithmetic form wins, N = 6.5 games, but p
+is not detected on positions this frequent. Next, the policy and Stockfish on the positions reached
+without them, to reach lower p.
 
 ## 2. Where to deviate (lab)
 

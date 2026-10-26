@@ -311,7 +311,10 @@ first pass, 54.8 on the second). So the scout has its own cache, `evals-by-depth
 depth (`DepthEvaluator` in `lab/scout.py`): a move is priced at exactly the depth of its MultiPV search (the
 position after it at 13), a floor at exactly 20, and the first eval at a depth stays. Each time it opens, it
 takes in the package's evals at their own depths (305,000 rows in 0.6 s); a position whose shallow eval was
-overwritten is searched again. The first VM run (2026-10-26) predates it: its values carry this noise, and a
+overwritten is searched again. The floors go to the package's cache too, never replacing a deeper eval: `rep`
+searches at 20 as well. Scouts run on a cloud VM, each with its own copy of the caches (one SQLite file shared by
+20 processes would wait on its locks), are merged back on the Mac: `lab.scout --merge` for the caches by
+depth, `lab.player --merge` and `--merge-policies` for the others. The first VM run (2026-10-26) predates it: its values carry this noise, and a
 gap under a point between two candidates decides nothing.
 
 ### ζ: how principled the repertoire is (2026-10-26, my proposal, agreed)

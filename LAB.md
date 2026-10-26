@@ -194,7 +194,7 @@ only slightly inferior and playable.
 
 - **Constraints**, on every one of my repertoire moves, not only the deviation:
   - relative: at most δ points below the best move, with a generous δ (8 proposed; 6.Neg5 costs 4.4).
-    Replaced the same day by ζ (below, "ζ"): δ, at 15 points, only bounds the search;
+    Replaced the same day by ζ (below, "ζ"), then removed (below, "The floor alone");
   - absolute: never lost against the best player. Stockfish's eval stays above a floor (45% proposed,
     about -0.5 pawn; nearer 40% as Black), at depth 20 or more since it is a safety constraint. The floor
     bounds the sum of small concessions.
@@ -301,6 +301,18 @@ model phase, settles from 0.2: 0.15 stays the default. The jump at 0.03 is to be
 |---|---|---|---|---|---|---|---|
 | Value (%) | 54.8 | 54.9 | 54.9 | 54.9 | 54.9 | 54.9 | 55.4 |
 | Nodes | 32 | 57 | 61 | 61 | 77 | 89 | 155 |
+
+### The floor alone (2026-10-26, my decision)
+
+δ is gone, even as a bound of the search: what matters is that the line is not lost. That Stockfish finds it
+less clear once out of complications it knows how to escape matters little if my opponent has not escaped the
+ones I set; whether the opponent escapes is ζ's question, not δ's. The floor already bounds what a move
+concedes, by the eval now minus the floor: about 8.5 points after Caro-Kann 6.h4 h6 (53.5%), 10 after Fort Knox
+5...Bc6 (55%), 21 after Rubinstein 7...b6 (66%, where Black has erred). So a bound on the concession would only
+bind where I am already better, punishing, which is where giving back some of the edge to keep the opponent in
+the complications can pay. My candidates are every judged move that keeps the floor; one below it is not
+searched (its floor is one search at depth 20). Within the search, my later moves are the `my_choices` (3)
+conceding least that keep the floor: there Stockfish's view still filters, a cost bound to be measured.
 
 ### Evals at fixed depths (2026-10-26)
 

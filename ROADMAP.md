@@ -1,8 +1,8 @@
 # Roadmap
 
 The order of the work, agreed 2026-10-26, when I decided to redo every repertoire with a new builder (see
-[LAB.md](LAB.md)). A phase starts when the one before is done. The current repertoires stay in the trainer
-until their replacements are validated.
+[LAB.md](LAB.md)). A phase starts when the one before is done. I do not train during the redesign: I work on
+it (2026-10-26). The current repertoires stay in the trainer until their replacements are validated.
 
 ## 0. Before redoing anything (first, 2026-10-26)
 
@@ -45,8 +45,12 @@ k = 5 on the M2: the search must share its subtrees; if that is not enough, Lc0 
 The test zone first (Caro-Kann, French 3.Nc3), then the key choices of [LAB.md](LAB.md) (2.Bc4 against the
 Petrov, the Open Sicilian, the Scandinavian with 3.Nf3; as Black 2.Nf3 d6 and the Najdorf), then where I
 play anything (as Black against the English and the London; as White against the Pirc, the Modern, the
-Alekhine). Each one: draft, my review, freeze, push, trainer, with the list of the learned moves that change.
-An unchanged move keeps its progress, which is kept by position and move ([MEMORIZATION.md](MEMORIZATION.md)).
+Alekhine). Each one: draft, my review, freeze, push, trainer.
+
+The repertoires and studies made so far, the drafts never committed with them, are backed up and then
+deleted as the new ones replace them (2026-10-26). The new ones need not resemble them: the Caro-Kann and the
+French Rubinstein will probably come out close, and if not, so be it; I spent little time on the Sicilian
+with 2...e6, and the rest may change freely.
 
 ## 6. The trainer
 
@@ -62,10 +66,3 @@ An unchanged move keeps its progress, which is kept by position and move ([MEMOR
   (Stockfish on 6 threads, a deeper eval replacing one a run already used); from the same copy, the
   restructured code matched the original on every output (2026-10-26).
 - A lab module moves to classes when it is touched.
-
-## Decided, and open
-
-- During the redesign I keep learning new lines of the current repertoires (2026-10-26), though a move
-  learned now may change.
-- The drafts never committed (Italian, Benoni, White Najdorf, the Scandinavian's changes): their specs as a
-  starting point and their trees dropped?

@@ -34,6 +34,13 @@ networks, T1 256x10, T1 512x15 and BT4 1024x15; Maia-1 (1100 to 1900); Maia-3 5M
   (legal moves + 1) nodes with an optimistic first-play value (`FpuStrategy absolute`, `FpuValue 1`, at the
   root too, no smart pruning), so every unvisited move looks best and gets exactly one visit.
 - lc0 writes castling king-takes-rook (`e8h8`), as the explorer does (`e1h1`); both are converted.
+- **Lc0's Python bindings** (`lczero.backends`, tried 2026-10-26 in a scratch environment, not adopted): built
+  from the v0.32.1 sources (`pip install` of the repository, Meson; Metal, BLAS through Accelerate and Eigen
+  compiled in). On 483 positions around the three test positions, with their history, the same moves and the
+  same numbers as `lc0` over UCI: the policy within 0.0006 (UCI's percentages rounded to 0.01%, then
+  normalized), the value within 0.003 points, Metal and BLAS alike. The small network: 12.8 ms a position over
+  UCI; with the bindings on Metal 5.4 ms alone, 1.2 ms in batches of 8, 0.74 ms from 64 (17 times faster);
+  on BLAS 11 ms alone, 4.8 ms from 32. Each batch size builds its graph on first use.
 
 ## The intuition index (2026-10-25)
 

@@ -247,34 +247,35 @@ adjustments agreed the same day:
   asked for the 1,940 missing positions on the paths to a position the fit can use (`lab.player --fill`,
   cached for good): the one exception to "from the caches only".
 
-### First fit (2026-10-26, `lab/player.py`, `data/lab/player-fit.json`)
+### The fit (2026-10-26, `lab/player.py`, `data/lab/player-fit.json`)
 
-1,828 positions with 200 club games or more, Lc0's policy and Stockfish on 95% of it: 785 to fit, 1,043
-held out in the test zone. log10 p runs from -6.3 to -0.5, median -2.5; 80% lie between -3.5 and -1.5.
-Mean cross-entropy on the test zone, in bits per move (the club's own entropy, the floor, is 1.45):
+16,085 positions with 200 club games or more, Lc0's policy and Stockfish on 95% of it: 11,941 to fit,
+4,144 held out in the test zone, 241 of them below p = 1e-4. A first fit on the 1,828 positions that had
+both could not measure p (36 test positions below 1e-4), so the policy was computed for the 12,914 positions
+without one (3 minutes) and Stockfish for 13,866 (16 minutes on a 32-vCPU spot VM, 32 single-threaded
+workers). Mean cross-entropy on the test zone, in bits per move (the club's own entropy, the floor, is 1.67):
 
 | Player | Test | Fitted |
 |---|---|---|
-| Intuitive (the policy) | 2.217 | |
-| Intuitive, tempered | 2.200 | τ = 1.08 |
-| Perfect (T = 2) | 2.972 | |
-| Arithmetic, constant α | **2.138** | α = 0.25, T = 6.2 points, τ = 0.92 |
-| Arithmetic, α set by p | 2.138 | α 0.16 at p = 1 to 0.31 at 1e-4 |
-| Geometric, constant β | 2.166 | β = 0.052 per point, τ = 1.31 |
-| Geometric, β set by p | 2.166 | β 0.086 at p = 1 to 0.040 at 1e-4 |
+| Intuitive (the policy) | 2.521 | |
+| Intuitive, tempered | 2.506 | τ = 1.12 |
+| Perfect (T = 2) | 3.464 | |
+| Arithmetic, constant α | **2.448** | α = 0.26, T = 9.1 points, τ = 0.94 |
+| Arithmetic, α set by p | 2.448 | α 0.22 at p = 1 to 0.28 at 1e-4 |
+| Geometric, constant β | 2.479 | β = 0.041 per point, τ = 1.28 |
+| Geometric, β set by p | 2.476 | β 0.063 at p = 1 to 0.033 at 1e-4 |
 
-- **The arithmetic form wins**, by 0.03 bits. It takes 0.08 bits off the policy alone, a tenth of the way
-  to the floor.
-- **p is not detected**: K2 gains under 0.001 bits, in opposite directions in the two forms. The range is
-  too narrow: 36 test positions below 1e-4, where the model matters.
-- **N = 6.5 games**: past about ten games, the observed shares beat the model. The blend beats both
-  the shares alone and the model alone at every sample size, from 5 games to 200.
-- **What limits the data is the policy**: 12,914 positions reached have none. Taking positions of 30
-  games or more instead of 200 adds only 79.
+- **The arithmetic form wins**, by 0.03 bits, as in the first fit. It takes 0.07 bits off the policy
+  alone, a tenth of the way to the floor; weighted by games, the same order (2.188 against 2.191).
+- **p changes nothing**: set by p, α or β gains 0.003 bits at most, with p now spanning 1e-6 to 1. The
+  club does not play more by intuition in rarer positions, not among positions of 200 games or more: the
+  model player takes a constant α. The club's own entropy rises as p falls (1.35 bits above 0.1, 1.77
+  below 1e-4), and the model's gap to it a little (0.76 to 0.84 bits).
+- **N = 6.2 games**: past about ten games, the observed shares beat the model. The blend beats both the
+  shares alone and the model alone at every sample size, from 5 games to 200.
 
-Next: the policy and Stockfish on the positions reached (phase 1, an engine job), to widen p downward and
-measure K2; then the player and the constraints in `lab/scout.py`. After that, the second question: which
-opponent moves the repertoire keeps.
+Next: the player and the constraints in `lab/scout.py` (rewritten 2026-10-26, the level-free version in
+the history). After that, the second question: which opponent moves the repertoire keeps.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

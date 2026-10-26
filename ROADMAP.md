@@ -22,9 +22,9 @@ geometric form, K1, K2, the temperature and N, by maximum likelihood on the cach
 explorer was asked for the 1,940 positions the cache lacked on the way, where the spec set my move
 (2026-10-26, "The gaps" in LAB.md).
 
-First fit done 2026-10-26 ([LAB.md](LAB.md), "First fit"): the arithmetic form wins, N = 6.5 games, but p
-is not detected on positions this frequent. Next, the policy and Stockfish on the positions reached
-without them, to reach lower p.
+Fit done 2026-10-26 ([LAB.md](LAB.md), "The fit"), on 16,085 positions once the policy and Stockfish were
+computed for the 13,866 that lacked them (Stockfish on a spot VM): the arithmetic form, a constant α of
+0.26 (p changes nothing), N = 6.2 games.
 
 ## 2. Where to deviate (lab)
 

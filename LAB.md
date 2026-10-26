@@ -294,13 +294,27 @@ My moves to the horizon cost the most (13, 61, 201 and 636 nodes for two to five
 phase cut), about 22 nodes per position the model phase starts from: some 11,000 nodes, 3.5 to 7 hours,
 for one candidate at the full horizon on the Mac.
 
-`branch`, the same cut within my horizon, measured on the same position with three moves of mine and no
-model phase, settles from 0.2: 0.15 stays the default. The jump at 0.03 is to be checked on another position.
+`branch`, the same cut within my horizon, measured with three moves of mine and no model phase, at fixed
+depths (below, "Evals at fixed depths"; the first values, with the cache's mixed depths, were about 1.3 points
+higher on 7.N1e2):
 
-| branch | 0.3 | 0.2 | 0.15 | 0.1 | 0.07 | 0.05 | 0.03 |
-|---|---|---|---|---|---|---|---|
-| Value (%) | 54.8 | 54.9 | 54.9 | 54.9 | 54.9 | 54.9 | 55.4 |
-| Nodes | 32 | 57 | 61 | 61 | 77 | 89 | 155 |
+| branch | 0.3 | 0.15 | 0.07 | 0.05 | 0.03 |
+|---|---|---|---|---|---|
+| 7.N1e2, value (%) | 53.5 | 53.6 | 53.6 | | 54.0 |
+| nodes | 32 | 59 | 81 | | 166 |
+| Fort Knox 6.Neg5, value (%) | 61.3 | 73.9 | 75.4 | 76.4 | 76.7 |
+| nodes | 1 | 64 | 139 | 172 | 243 |
+
+On 7.N1e2 it moves by half a point at most; not on 6.Neg5, where each rarer reply followed is one more mistake: 2.8 points
+from 0.15 to 0.03. 0.15 stays for now; where the traps are, it undervalues them a little. `my_choices`, the
+same way: 7.N1e2 53.6, 53.6 and 54.2 for 3, 4 and 5 (59, 87 and 114 nodes), 6.Neg5 73.9 for all three (76, 90
+and 104 nodes): 3 stays.
+
+The club's own scores (the explorer cache, 1800-2499, blitz and rapid, the mover's score) agree with my moves:
+6.Neg5 63.6% (7,692 games) against 6.Bd3 50.7%; 7.Nh3 58.3% and 7.N1e2 58.2% against 7.Nf3 54.5% and 7.h5
+51.6%; 8.Neg5 72.3% (764 games) against 8.Ne5 64.5%. The scout overrates the size: 74 to 77% for 6.Neg5
+against 64% (the Lichess curve is not the club's, 6.Bd3's eval of 55% scores 50.7%; the short horizon counts
+8.Nxf7 Kxf7 at its eval). The players of a rare move often know it, which flatters its score.
 
 ### The floor alone (2026-10-26, my decision)
 

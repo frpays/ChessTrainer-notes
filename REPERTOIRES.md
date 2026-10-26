@@ -2,7 +2,8 @@
 
 How a repertoire is built from its spec, the rules the builder follows and why, how it is annotated, and the
 parts of it published (its study) and trained (its training). Code: `tools/src/repertoire/build.py` (the
-builder), `forced.py` (line ends), `style.py` (published look), `cut.py` (study and training), `spec.py`. The
+builder), `draft.py` (the draft), `forced.py` (line ends), `style.py` (published look), `cut.py` (study and
+training), `spec.py`. The
 commands are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Three words

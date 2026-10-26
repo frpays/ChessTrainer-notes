@@ -21,14 +21,25 @@ training (`<name>.training.pgn`) is served by the trainer; see [REPERTOIRES.md](
 
 `tools/src/repertoire/`, run with `uv run rep <command>` on the Mac (`rep --help` lists the commands).
 
-| Area | Modules | Role |
+| Area | Modules (main classes) | Role |
 |---|---|---|
-| Lichess and engine | `lichess.py`, `games.py`, `studies.py`, `explorer.py`, `engine.py` | API client; my games (`data/games/*.ndjson`); study exports; opening explorer (club and masters, cached forever in `data/cache/explorer.sqlite`); Stockfish evaluations (`data/cache/evals.sqlite`) |
-| Analysis of my games | `tree.py`, `report.py`, `mistakes.py`, `practical.py`, `ideas.py`, `models.py` | Move trees and statistics of my games; recurring losing moves; practical value of candidate moves; short ideas instead of long variations; model games for plans |
-| Building repertoires | `spec.py`, `build.py`, `forced.py`, `style.py`, `starts.py`, `reach.py`, `cut.py` | Spec files (my choices, chapters, notes) and locks; the builder; forced sequences at line ends; how comments look once published; how often club games reach each repertoire, and each move of a repertoire (the coverage of a set of moves); the study and the training |
-| Publishing | `sync.py`, `export.py` | Push to Lichess studies, detect online edits; one-game-per-line export |
-| Trainer | `trainer.py`, `trainer/` | HTTP server; browser app (`app.js`, with chessground and chess.js vendored) |
-| Entry point | `cli.py`, `config.py` | `rep` commands; paths and tokens |
+| Lichess and engine | `lichess.py`, `games.py` (`GameArchive`), `studies.py` (`StudyArchive`), `explorer.py` (`Explorer`), `engine.py` (`Evaluator`) | API client; my games (`data/games/*.ndjson`); study exports; opening explorer (club, 2500+ blitz and masters, cached forever in `data/cache/explorer.sqlite`); Stockfish evaluations (`data/cache/evals.sqlite`) |
+| Analysis of my games | `tree.py` (`Game`, `GameTree`), `report.py` (`TreeReport`, `Sections`), `mistakes.py` (`MistakeFinder`), `practical.py` (`PracticalJudge`), `ideas.py` (`Material`), `models.py` (`PlanNote`, `ModelGames`) | Move trees and statistics of my games; recurring losing moves; practical value of candidate moves; short ideas instead of long variations; model games for plans |
+| Building repertoires | `spec.py` (`Spec`, `RepertoireFiles`, `Notes`, `Lock`), `build.py` (`Policy`, `Builder`, `ChapterSplitter`), `draft.py` (`Draft`), `forced.py` (`ForcedSequences`), `refresh.py` (`Refresh`), `reach.py` (`Reach`, `Coverage`, `Entries`), `cut.py` (`Cutter`), `starts.py` (`Starts`) | Spec files (my choices, chapters, notes), the files of a repertoire, locks; the builder and the draft pipeline; forced sequences at line ends; how often club games reach each move of a repertoire (the coverage of a set of moves); the study and the training; how often club games reach each repertoire |
+| Text of the trees | `pgn.py` (`Chapters`, `Nodes`, `MoveText`), `style.py` (`Comments`, `Symbols`, `Style`), `chances.py` (`Chances`) | Reading and writing chapters, walking their trees, moves as text; the vocabulary of the comments and how they look once published; winning chances and Lichess's judgements |
+| Publishing | `sync.py` (`StudySync`), `export.py` (`Export`) | Push to Lichess studies, detect online edits; one-game-per-line export |
+| Trainer | `lines.py` (`TrainerLines`), `trainer.py` (`Trainer`), `trainer/` | The lines served (`lines.json`); HTTP server, progress, settings, review log; browser app (`app.js`, with chessground and chess.js vendored) |
+| Entry point | `cli.py` (a `Command` class per command), `config.py`, `params.py`, `tuning.py` | `rep` commands; paths and tokens; parameters |
+
+The code is classes, each owning its data (2026-10-26). Every tuning constant is a field of a dataclass deriving
+from `params.Parameters`, its default in the code: the builder's (`BuilderParameters`), the practical judge's,
+the forced sequences', the cuts' and the model games'. `tuning.Tuning` gathers them, and
+`repertoire/tuning.yaml`, optional, overrides some of them, section by section (an unknown key is an error). A
+repertoire's own choices stay in its spec, the look of the studies in `style.yaml`.
+
+Tests: `tools/tests/`, unittest classes that pytest runs too (`uv run pytest`), with fakes of the engine, the
+explorer and Lichess. `tests/sandbox.py`, imported first by every test module, points the repository and the
+data folder at temporary folders and blocks the network and the engine.
 
 ## From a spec to a study and a training
 
@@ -65,7 +76,7 @@ single-page app.
 
 The browser keeps unsaved progress and answers in local storage and sends them in batches, one at a time
 (a batch never overtakes the one before it), so a lost connection costs nothing. The files the server reads
-(PGN files, `starts.json`, progress, settings) are written atomically (`config.write_atomic`): a request
+(PGN files, `starts.json`, progress, settings) are written atomically (`Files.write_atomic`): a request
 during `rep cut` or a draft never reads half a file. Static files are served with `no-cache`: a phone always gets the current page.
 
 ## Infrastructure

@@ -2,7 +2,7 @@
 
 How the trainer (`rep serve`, see [ARCHITECTURE.md](ARCHITECTURE.md)) decides what to show me, what it
 records, and how it estimates what I still remember. Code: `tools/src/repertoire/trainer/app.js` (grading,
-sessions, Lines page) and `tools/src/repertoire/trainer.py` (files, settings).
+sessions, Lines page) and `tools/src/repertoire/trainer.py` (files, settings), `lines.py` (the lines served).
 
 ## The unit: one move of mine in one position
 

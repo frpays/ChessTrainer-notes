@@ -29,13 +29,15 @@ training (`<name>.training.pgn`) is served by the trainer; see [REPERTOIRES.md](
 | Text of the trees | `pgn.py` (`Chapters`, `Nodes`, `MoveText`), `style.py` (`Comments`, `Symbols`, `Style`), `chances.py` (`Chances`) | Reading and writing chapters, walking their trees, moves as text; the vocabulary of the comments and how they look once published; winning chances and Lichess's judgements |
 | Publishing | `sync.py` (`StudySync`), `export.py` (`Export`) | Push to Lichess studies, detect online edits; one-game-per-line export |
 | Trainer | `lines.py` (`TrainerLines`), `trainer.py` (`Trainer`), `trainer/` | The lines served (`lines.json`); HTTP server, progress, settings, review log; browser app (`app.js`, with chessground and chess.js vendored) |
-| Entry point | `cli.py` (a `Command` class per command), `setup.py` (`setup`), `config.py`, `params.py`, `tuning.py` | `rep` commands; where the folders are (`setup`, the one `Setup`, read at import: `REPERTOIRE_DIR` and `REPERTOIRE_DATA_DIR` in `.env` move them; the commit of the code, printed at import), my accounts; tokens and atomic writes; parameters |
+| Entry point | `cli.py` (a `Command` class per command), `setup.py` (`setup`), `config.py`, `params.py`, `tuning.py` | `rep` commands; where the folders are (`setup`, the one `Setup`, read at import: `REPERTOIRE_DIR` and `REPERTOIRE_DATA_DIR` in `.env` move them; the commit of the code, printed at import), my Lichess accounts (`repertoire/lichess.yaml`); tokens and atomic writes; parameters |
 
 The code is classes, each owning its data (2026-10-26). Every tuning constant is a field of a dataclass deriving
 from `params.Parameters`, its default in the code: the builder's (`BuilderParameters`), the practical judge's,
 the forced sequences', the cuts' and the model games'. `tuning.Tuning` gathers them, and
 `repertoire/tuning.yaml`, optional, overrides some of them, section by section (an unknown key is an error). A
-repertoire's own choices stay in its spec, the look of the studies in `style.yaml`.
+repertoire's own choices stay in its spec, the look of the studies in `style.yaml`. My Lichess accounts are
+`setup.LichessAccounts`, none by default: `repertoire/lichess.yaml` names them (`accounts`, whose games are mine;
+`studies`, the account of the studies, whose token also signs the explorer's requests) (2026-10-26).
 
 Tests: `tools/tests/`, unittest classes that pytest runs too (`uv run pytest`), with fakes of the engine, the
 explorer and Lichess. `tests/sandbox.py`, imported first by every test module, points the repository and the

@@ -37,8 +37,11 @@ Stockfish's best with probability ζ on each move, 0 by default; δ (15 points) 
 
 Accepted when, in three positions of the test zone, the scout given no candidate ranks first 7.N1e2 and 7.Nh3
 with the Nh5 cluster (Caro-Kann 6.h4 h6), 6.Neg5 (Fort Knox 5...Bc6) and 8.Neg5 (Rubinstein 7...b6), or ranks
-above them a move that holds up when I examine it (a better deviation is a find, not a failure). Then the
-scan: my positions along the test zone's lines, the deviations ranked by their gain times my p.
+above them a move that holds up when I examine it (a better deviation is a find, not a failure). First run
+on a spot VM, 2026-10-26: 20 candidates in the three positions at the full horizon, before ζ and the evals at
+fixed depths ([LAB.md](LAB.md), "Evals at fixed depths"); then the head of each position again at fixed depths,
+ζ 0 and 0.2. Then the scan: my positions along the test zone's lines, a short horizon to sort the deviations,
+the full horizon for the best, ranked by their gain times my p.
 
 ## 3. Which opponent moves, and where lines end (lab)
 

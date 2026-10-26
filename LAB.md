@@ -292,14 +292,33 @@ around 0.07, the default since:
 A cut too coarse undervalues the line by two points: the replies it drops are the opponent's mistakes.
 My moves to the horizon cost the most (13, 61, 201 and 636 nodes for two to five of them, the model
 phase cut), about 22 nodes per position the model phase starts from: some 11,000 nodes, 3.5 to 7 hours,
-for one candidate at the full horizon on the Mac. `branch`, the same cut within my horizon (0.15), is
-measured next.
+for one candidate at the full horizon on the Mac.
+
+`branch`, the same cut within my horizon, measured on the same position with three moves of mine and no
+model phase, settles from 0.2: 0.15 stays the default. The jump at 0.03 is to be checked on another position.
+
+| branch | 0.3 | 0.2 | 0.15 | 0.1 | 0.07 | 0.05 | 0.03 |
+|---|---|---|---|---|---|---|---|
+| Value (%) | 54.8 | 54.9 | 54.9 | 54.9 | 54.9 | 54.9 | 55.4 |
+| Nodes | 32 | 57 | 61 | 61 | 77 | 89 | 155 |
+
+### Evals at fixed depths (2026-10-26)
+
+The package's cache keeps one eval per position, the deepest of any search. The scout reads its prices at
+depth 14 and its floors at 20: a floor's search overwrote the depth-14 eval of the same position, and the
+value of a line depended on what was searched before, by about a point (7.N1e2 at `branch` 0.3: 53.8 on a
+first pass, 54.8 on the second). So the scout has its own cache, `evals-by-depth.sqlite`, by position and
+depth (`DepthEvaluator` in `lab/scout.py`): a move is priced at exactly the depth of its MultiPV search (the
+position after it at 13), a floor at exactly 20, and the first eval at a depth stays. Each time it opens, it
+takes in the package's evals at their own depths (305,000 rows in 0.6 s); a position whose shallow eval was
+overwritten is searched again. The first VM run (2026-10-26) predates it: its values carry this noise, and a
+gap under a point between two candidates decides nothing.
 
 ### ζ: how principled the repertoire is (2026-10-26, my proposal, agreed)
 
 δ had no theoretical ground, and 8 points is not generous. In its place, the opponent of the search is
-J_ζ = ζ·perfect + (1-ζ)·J, J the practical-model player blended with the club's shares: on each of his
-moves he plays Stockfish's best with probability ζ, 0 by default (`ScoutParameters.zeta`).
+J_ζ = ζ·perfect + (1-ζ)·J, J the practical-model player blended with the club's shares: on each of its
+moves it plays Stockfish's best with probability ζ, 0 by default (`ScoutParameters.zeta`).
 
 - **The ground**: Huber's contamination model, the classic of robust decisions. I trust the model at 1 - ζ;
   otherwise the opponent is the worst case for me, which in a zero-sum game is the perfect player. ζ is my

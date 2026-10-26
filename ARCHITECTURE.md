@@ -29,7 +29,7 @@ training (`<name>.training.pgn`) is served by the trainer; see [REPERTOIRES.md](
 | Text of the trees | `pgn.py` (`Chapters`, `Nodes`, `MoveText`), `style.py` (`Comments`, `Symbols`, `Style`), `chances.py` (`Chances`) | Reading and writing chapters, walking their trees, moves as text; the vocabulary of the comments and how they look once published; winning chances and Lichess's judgements |
 | Publishing | `sync.py` (`StudySync`), `export.py` (`Export`) | Push to Lichess studies, detect online edits; one-game-per-line export |
 | Trainer | `lines.py` (`TrainerLines`), `trainer.py` (`Trainer`), `trainer/` | The lines served (`lines.json`); HTTP server, progress, settings, review log; browser app (`app.js`, with chessground and chess.js vendored) |
-| Entry point | `cli.py` (a `Command` class per command), `config.py`, `params.py`, `tuning.py` | `rep` commands; paths and tokens; parameters |
+| Entry point | `cli.py` (a `Command` class per command), `setup.py` (`setup`), `config.py`, `params.py`, `tuning.py` | `rep` commands; where the folders are (`setup`, the one `Setup`, read at import: `REPERTOIRE_DIR` and `REPERTOIRE_DATA_DIR` in `.env` move them), my accounts; tokens and atomic writes; parameters |
 
 The code is classes, each owning its data (2026-10-26). Every tuning constant is a field of a dataclass deriving
 from `params.Parameters`, its default in the code: the builder's (`BuilderParameters`), the practical judge's,

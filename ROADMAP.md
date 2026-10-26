@@ -52,9 +52,33 @@ drafted by the lab, compared with mine.
 ## 4. The new builder in `rep`
 
 Classes, `Parameters`, tests. It replaces the rules that grew case by case (the habit margin, the
-transposition priority, the temporary lock). The risk is the cost, about ten minutes per candidate move at
-k = 5 on the M2: the search must share its subtrees; if that is not enough, Lc0 on a GPU spot VM
-([ARCHITECTURE.md](ARCHITECTURE.md), "Later").
+transposition priority, the temporary lock). It works on a whole subtree (the Caro-Kann after 1.e4 c6): at
+each of my positions it decides my move, the main line's or a deviation there, with the full horizon from that
+position (a receding horizon: near the horizon the scout's later moves are decided short-sighted; the searches
+overlap and share their evals through the caches); at each of the opponent's, the replies kept and where the
+line ends (phase 3).
+
+The risk is the cost: hours per candidate move at the full horizon on the Mac with the practical-model player
+(the ten minutes of the first prototype are past), Stockfish taking 94% of the CPU, Python 4.5% and Lc0 2.4%
+(the scouts on the VM, 2026-10-26). The plan (2026-10-26, agreed), after the first results of the scout:
+
+1. **The search in two passes.** The tree's shape depends only on each position's evals (the moves judged, the
+   replies followed, my moves above the floor), not on the values backed up. So: an expansion level by level,
+   every search of a level sent at once (the policies, then the MultiPV of the judged moves at depth 14, then
+   the floors of my moves at 20: some 16 levels of 3 stages, hundreds of searches each), then the values backed
+   up in Python from the caches. A position is judged at a canonical p, so the result does not depend on the
+   order. Checked against the present search on 7.N1e2 at a short horizon.
+2. **A local pool** of single-threaded Stockfish: four on the Mac give more than one on four threads at depth 14.
+3. **A worker on a spot VM**: one ssh connection, JSON lines both ways (a position, its moves, the depth; the
+   evals back), a single-threaded Stockfish on every vCPU. The latency counts once a batch, not once a search.
+   The builder stays on the Mac with its caches: no merge, a preemption loses only the searches in flight; the
+   Mac kept awake (`caffeinate`), the connection resumed and the requests sent again. Lc0 stays in the builder
+   on the Mac (Metal): the policy comes first at each position, costs little, and its cache is there; every new
+   policy from one backend. ssh gives encryption and authentication with no port opened: no HTTP service, no
+   queue.
+4. **Then Python is the bottleneck**: about 1.3 cores for 30 engines, in one process. SQLite writes in one
+   transaction per batch, lighter handling of moves, a level's expansion over two processes if needed; Lc0 in
+   true batches if it ever limits (through UCI, one position per call).
 
 ## 5. Redoing the repertoires, one at a time
 

@@ -43,7 +43,7 @@ Rules are general, not tuned case by case.
 
 ## Opponent moves
 
-- The club replies (Lichess explorer, 1800-2200, blitz and rapid): at least 5% of the position's games and
+- The club replies (Lichess explorer, 1800-2499, blitz and rapid): at least 5% of the position's games and
   `min_reach` of the chapter's, or the main reply, which is always followed.
 - **Shares are estimates** (2026-10-24): a reply's club games plus 50 games split equally between the replies
   the engine finds sound (within 5 points of its best), over the position's games plus 50. Where club games

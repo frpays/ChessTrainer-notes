@@ -158,7 +158,7 @@ Each is a move distribution, kept in the caches:
 1. Perfect: Stockfish. Its evals become a distribution through a softmax of the losses, in points of
    winning chances: p(m) ∝ exp(-loss(m) / T), with T = 2 points, about the uncertainty of a depth-14 eval
    (`lab/perfect.py`). `evals.sqlite` holds one eval per position: a move's is that of the position after.
-2. Practical: what the club plays (Lichess, blitz and rapid, 1800 to 2200). Not theory but a mixture:
+2. Practical: what the club plays (Lichess, blitz and rapid, 1800 to 2499). Not theory but a mixture:
    players who analysed the position, who remember a move or more, who play by intuition at various levels
    and thinking times. `explorer.sqlite` holds games, results and average rating for the 15 most played.
 3. Intuitive: the small Lc0 network's policy, with no level. It alone says whether a position is hard to

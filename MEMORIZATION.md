@@ -73,7 +73,7 @@ opponent's moves are played for me. Playing from memory, nothing gives an answer
 The Lines page estimates, for every repertoire, chapter and line, how likely a game falls into a line I no
 longer know, and sorts by it ("Priority first").
 
-**Reach** comes from club games (Lichess explorer, 1800-2200, blitz and rapid): a repertoire's is how often
+**Reach** comes from club games (Lichess explorer, 1800-2499, blitz and rapid): a repertoire's is how often
 club games of its colour enter it (`repertoire/starts.json`); a chapter's, its share of the repertoire; a line's,
 its share of the chapter.
 

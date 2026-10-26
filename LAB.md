@@ -134,10 +134,29 @@ sideline of its own), 7.Nh3 +6.1, 7.N1e2 +5.8, 7.h5 +0.9; after the knight moves
 Nf6 10.Nfh5 Nbd7 11.Bc4. The two models agree on the Nh5 cluster and on 7.h5 being the least practical;
 they disagree on 7.Nf3, whose value comes from where the club actually goes wrong.
 
+Five more decision points against the club opponent, k = 5, by value (my winning chances; within a
+position compare values, since `net` subtracts a depth-14 eval of the root that can be off by several
+points, as 4.Bg5's price of -4.7 shows); 3 to 30 minutes a move:
+
+- Fort Knox 5...Bc6: 6.Neg5 79.0 (net +24.0), 6.Bd3 64.3, 6.Ng3 59.7. My move, by more than against the
+  blind opponent; likeliest 6...Nd7? 7.Nxf7 Kxf7 8.Ng5+.
+- Caro-Kann 4...Nd7: 5.Bd3 64.4, 5.Bc4 63.0, 5.Nf3 62.7, 5.Ng5 62.6 (my move). All within two points;
+  5.Ng5 and 5.Bd3 reach the same main line (...Ngf6, Bd3 or Ng5, ...e6 Qe2 Bd6 N1f3 h6 Ne4).
+- Caro-Kann 4...Nf6: 5.Qd3 58.6, 5.Ng3 56.4, 5.Nxf6+ 54.7 (my move). The Tartakower positions where the
+  club goes wrong (8.Qc2 Re8+ 9.Ne2, club accuracy 0.52, gap -17) come at the last opponent move of the
+  horizon, where only the immediate loss counts: the search may undervalue them.
+- Winawer 3...Bb4 (not in my repertoire): 4.Ne2 62.8, 4.e5 61.0, 4.Qd3 58.9, 4.exd5 58.3, 4.a3 56.5. The
+  reconnaissance's 4.Qd3 does not stand out; 4.Ne2 (price 0.5) does, to be checked.
+- Classical 3...Nf6 (not in my repertoire): 4.Bg5 60.6, 4.exd5 58.0, 4.e5 56.9; after 4.Bg5 Be7 5.e5 Nfd7
+  the search plays 6.h4, the reconnaissance's Alekhine-Chatard idea.
+
 ## Toward the builder: a proposal (2026-10-26, not decided)
 
 - The opponent: the club's moves where it has played, the small Lc0 network's policy elsewhere (in place
-  of the equal split between sound moves), blended as the builder's prior already does.
+  of the equal split between sound moves), blended as the builder's prior already does. The same model
+  serves both choices: my moves (the expectimax) and the opponent moves the repertoire covers. A small
+  bias: where both exist, the club is a little less accurate than the policy (0.906 against 0.922), so
+  the blend slightly favors popular lines over rare deviations; a policy temperature can correct it.
 - My moves: the expectimax of `lab/scout.py` (five opponent moves ahead, my later moves chosen among sound
   ones) instead of one move at a time; my habits and transpositions as tie-breaks.
 - Where lines end: a calm position is one where the natural moves are good for both sides (instinct 0.95

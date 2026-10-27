@@ -486,6 +486,17 @@ measured moves); `data/lab/screen/2026-10-27T1848.json`.
   fifteen moves near 625 games is some 3.5 points up by noise alone (12.Kf1, +7.5 over 663 games). Each edge
   shrunk by its error (empirical Bayes, the spread of true edges estimated from the data) rather than a bare
   threshold.
+- **The Sicilian with 2...e6** (from 4.Nxd4, no move of mine given): 81 decision points in 27 minutes, two of
+  them waiting out the explorer's rate limit; `data/lab/screen/2026-10-27T1941.json`. Four systems: the
+  Taimanov (25 points), 4...Nf6 (24, 14 of them in the Sveshnikov reached by 5.Nc3 Nc6 6.Ndb5 d6 7.Bf4 e5),
+  the Scheveningen (17), the Kan (8). The largest gains: after 4...Nc6, 5.Bf4 56.3% over 13,683 games and 5.Nb5
+  54.7% over 352,149 against 50.8% for the masters' 5.Nc3; after 9...b5 in that Sveshnikov, 10.Bxf6 58.0%
+  against 50.8% for 10.Nd5; after 5.Nc3 Qc7, 6.Qd3 57.4% over 6,465 against 47.3% for 6.Be3. Against 4...Nf6
+  every move of mine scores under 50%; in the Kan, the club's 5.Nc3 (46.0%) trails the masters' 5.Bd3 (49.9%).
+  A third thing for the builder: the explorer counts every game through a position, whatever the move order,
+  so a point other openings reach is overweighted (after 4...d6 5.Nc3 a6 6.Be3 Nf6, 838,826 games against
+  493,067 at the position before: the Najdorf's 6.Be3 e6 arrives there). The reach along the tree (p, as
+  `lab/player.py`'s `Reach`) instead of n over the start's games.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

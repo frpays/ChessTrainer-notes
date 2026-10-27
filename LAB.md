@@ -485,7 +485,7 @@ measured moves); `data/lab/screen/2026-10-27T1848.json`.
   score plus the gains below it, each scaled by its share of the point. And the winner's curse: the best of
   fifteen moves near 625 games is some 3.5 points up by noise alone (12.Kf1, +7.5 over 663 games). Each edge
   shrunk by its error (empirical Bayes, the spread of true edges estimated from the data) rather than a bare
-  threshold.
+  threshold. The nested points are kept in mind, not adopted (below, "Early deviations").
 - **The Sicilian with 2...e6** (from 4.Nxd4, no move of mine given): 81 decision points in 27 minutes, two of
   them waiting out the explorer's rate limit; `data/lab/screen/2026-10-27T1941.json`. Four systems: the
   Taimanov (25 points), 4...Nf6 (24, 14 of them in the Sveshnikov reached by 5.Nc3 Nc6 6.Ndb5 d6 7.Bf4 e5),
@@ -497,6 +497,57 @@ measured moves); `data/lab/screen/2026-10-27T1848.json`.
   so a point other openings reach is overweighted (after 4...d6 5.Nc3 a6 6.Be3 Nf6, 838,826 games against
   493,067 at the position before: the Najdorf's 6.Be3 e6 arrives there). The reach along the tree (p, as
   `lab/player.py`'s `Reach`) instead of n over the start's games.
+
+### Early deviations (2026-10-27, my decision)
+
+Deviating early pays: each further move of the main line gives the opponent the chance to deviate first. And a
+deviation's club score already counts every reply after it, where the gains found below the main move each
+need their own preparation, at points the opponent may never let me reach. So the earliest sound deviation
+that scores is preferred; the backup along the backbone stays an idea to keep in mind.
+
+### The parallel search (2026-10-26, agreed; deferred 2026-10-27)
+
+Planned for the scout at every candidate, before the club's verdict made it unneeded at the decision points;
+kept for the model's share if it turns out large (ROADMAP phase 4):
+
+1. **The search in two passes.** The tree's shape depends only on each position's evals (the moves judged, the
+   replies followed, my moves above the floor), not on the values backed up. So: an expansion level by level,
+   every search of a level sent at once (the policies, then the MultiPV of the judged moves at depth 14, then
+   the floors of my moves at 20: some 16 levels of 3 stages, hundreds of searches each), then the values backed
+   up in Python from the caches. A position is judged at a canonical p, so the result does not depend on the
+   order. To be checked against the present search on 7.N1e2 at a short horizon.
+2. **A local pool** of single-threaded Stockfish: four on the Mac give more than one on four threads at depth 14.
+3. **A worker on a spot VM**: one ssh connection, JSON lines both ways (a position, its moves, the depth; the
+   evals back), a single-threaded Stockfish on every vCPU. The latency counts once a batch, not once a search.
+   The builder stays on the Mac with its caches: no merge, a preemption loses only the searches in flight; the
+   Mac kept awake (`caffeinate`), the connection resumed and the requests sent again. Lc0 stays in the builder
+   on the Mac (Metal): the policy comes first at each position, costs little, and its cache is there; every new
+   policy from one backend. ssh gives encryption and authentication with no port opened: no HTTP service, no
+   queue.
+4. **Then Python is the bottleneck**: about 1.3 cores for 30 engines, in one process. SQLite writes in one
+   transaction per batch, lighter handling of moves, a level's expansion over two processes if needed; Lc0 in
+   true batches through its Python bindings (17 times faster on Metal, above, "Engines").
+
+## Lc0 where the club runs out (2026-10-27, my proposals)
+
+At the decision points the club's scores replace the practical-model player, and Lc0 with it. It keeps what
+the club cannot measure:
+
+- **The opponent's mistakes to punish**: a reply natural for the policy that Stockfish finds losing (the trap
+  of the intuition index above), kept in the repertoire with the move that punishes it, weighed by its
+  probability times what the punishment gains. The club measures the mistakes that are played; Lc0 foresees
+  the others, in the lines and depths where the games run out.
+- **The lines to push**: after a mistake I have the advantage, but keeping it may need moves my intuition
+  would not find (Stockfish's best low in my policy, my natural moves losing much of the advantage). A line
+  goes on while it needs them and ends when my natural moves keep the advantage: the depth follows the
+  difficulty, and these hidden moves are the ones to learn, first in the trainer. It sharpens the calm position
+  above (instinct 0.95 or more for both sides, a level eval): on my side the question is whether my natural
+  moves keep the advantage.
+- **The moves the club has not played**, candidate deviations included, judged by the practical-model player;
+  and the natural move among equals, easier to remember.
+
+How much loss is worth one more move of a line is a weight, not a threshold: the reach times the loss avoided,
+against the cost of one more move to learn, still to be measured.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

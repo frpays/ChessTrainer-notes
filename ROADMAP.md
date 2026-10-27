@@ -28,75 +28,58 @@ computed for the 13,866 that lacked them (Stockfish on a spot VM): the arithmeti
 
 ## 2. Where to deviate (lab)
 
-The player and the constraints in `lab/scout.py`: a floor of 45% (about 40% as Black) at depth 20 or more,
-a horizon of five of my moves then three of the model's. My candidates are the policy's likeliest moves (up
-to 95%) and Stockfish's best; at equal value (within a point) the more natural one, easier to remember and
-the one I play if I forget (2026-10-26). How principled the repertoire is, is ζ: the opponent plays
-Stockfish's best with probability ζ on each move, 0 by default (2026-10-26, [LAB.md](LAB.md), "ζ"); no
-bound on what a move concedes, the floor alone ("The floor alone").
+At the decision points of the backbone, by the club's own scores (2026-10-27, agreed; [LAB.md](LAB.md),
+"The backbone and its decision points", "The club's verdict first"):
 
-Accepted when, in three positions of the test zone, the scout given no candidate ranks first 7.N1e2 and 7.Nh3
-with the Nh5 cluster (Caro-Kann 6.h4 h6), 6.Neg5 (Fort Knox 5...Bc6) and 8.Neg5 (Rubinstein 7...b6), or ranks
-above them a move that holds up when I examine it (a better deviation is a find, not a failure). First run
-on a spot VM, 2026-10-26: 20 candidates in the three positions at the full horizon, before ζ and the evals at
-fixed depths; no scout finished in 12 hours. The club's own scores rank the three deviations first, within
-each rating band ([LAB.md](LAB.md), "The club's verdict first"). So the scan goes by the club's data
-(2026-10-27, agreed): at each decision point, my moves the club has played, by their score against the main
-move's, the floor kept; the scout only for the moves it has not played, once its cost (`my_choices` 1 and 2)
-is measured and it is calibrated against the club where the club has played. `lab/screen.py` does the first
-part (2026-10-27): on the Caro-Kann, 54 decision points in 10 minutes, the test zone's deviations found
-([LAB.md](LAB.md), "The screen on the Caro-Kann"). Next: the backup along the backbone and the edges shrunk by
-their error.
+- **The backbone**, from a start: the opponent's every club move whose position keeps n/Nt at or above a
+  threshold (3e-5 by default), one move of mine at each of my positions (given in the spec, else the masters',
+  2500+ blitz's, or the club's most played). Moves given in advance shrink the decision points (2026-10-26).
+- **At each decision point**, my moves the club has played enough (625 games: a score within ±2 points), by
+  their score against the main move's; Stockfish's floor kept (45% as White, 40% as Black, at depth 20).
+- **Early deviations first** (2026-10-27, my decision): each further move of the main line gives the opponent
+  the chance to deviate first, and a deviation's club score already counts every reply after it. Valuing the
+  main move by the gains found below it ("nested points") is kept in mind, not adopted.
+
+`lab/screen.py` does it: the Caro-Kann after 3.Nc3, 54 decision points in 10 minutes; the Sicilian with 2...e6,
+81 in 27 minutes. It ranks first the three deviations of the test zone (Caro-Kann 6.h4 h6 7.Nh3 and 7.N1e2,
+Fort Knox 5...Bc6 6.Neg5, Rubinstein 7...b6 8.Neg5), the acceptance criterion. Left for the lab: each edge
+shrunk by its error (the best of many moves near 625 games is up by noise), and the reach along the tree
+instead of n over the start's games (the explorer counts the games of every move order).
+
+The scout of `lab/scout.py` (the expectimax against the practical-model player) no longer decides: no
+candidate finished in 12 hours on a spot VM (2026-10-26). It is kept, if needed, for the moves the club has not
+played, at a far smaller cost (`my_choices` 1 or 2) and calibrated against the club where the club has played.
 
 ## 3. Which opponent moves, and where lines end (lab)
 
-The second question of [LAB.md](LAB.md): the opponent moves a repertoire keeps. A line ends in a calm
-position: instinct 0.95 or more for both sides, a level eval. Then a whole Caro-Kann and French Rubinstein
-drafted by the lab, compared with mine.
+After each move chosen, the lines (2026-10-27, my proposals; [LAB.md](LAB.md), "Lc0 where the club runs out"):
+
+- **The opponent's replies kept**: those the club plays enough, and the mistakes Lc0 foresees: a reply natural
+  for its policy that Stockfish finds losing (10 points or more, Lichess's mistake; the trap of the intuition
+  index), weighed by its probability times what punishing it gains. The club measures the mistakes that are
+  played, Lc0 foresees the others, deep in the lines where the games run out.
+- **My moves there**: the club's best where it has measured them, else Stockfish's best above the floor; at
+  equal value the more natural (the policy), easier to remember.
+- **Where a line ends**: it goes on while keeping the advantage needs a move of mine Lc0 finds unnatural
+  (Stockfish's best low in my policy, my natural moves losing much of the advantage), and ends when my natural
+  moves keep it. The depth follows the difficulty, and these hidden moves are the ones to learn. How much loss
+  is worth one more move: its reach times the loss avoided, against the cost of a move to learn (not measured
+  yet).
+
+Then a whole Caro-Kann and French Rubinstein drafted by the lab, compared with mine.
 
 ## 4. The new builder in `rep`
 
 Classes, `Parameters`, tests. It replaces the rules that grew case by case (the habit margin, the
-transposition priority, the temporary lock). It works on a whole subtree (the Caro-Kann after 1.e4 c6): at
-each of my positions it decides my move, the main line's or a deviation there, with the full horizon from that
-position (a receding horizon: near the horizon the scout's later moves are decided short-sighted; the searches
-overlap and share their evals through the caches); at each of the opponent's, the replies kept and where the
-line ends (phase 3).
+transposition priority, the temporary lock). It works on a whole subtree from a start, with the moves the spec
+gives: a first pass for the backbone and my move at each decision point (phase 2), a second for the lines after
+each (phase 3), the model (Lc0's policy, Stockfish) where the club lacks games.
 
-Its first pass finds the backbone and its decision points exactly (2026-10-26, agreed; [LAB.md](LAB.md), "The
-backbone"): my moves fixed, the opponent's club moves above a threshold in n/Nt. The deviations are searched at
-the decision points only, the rest of the subtree cheaply. Fixing moves first shrinks the count, and the
-threshold can then go lower. The target: the Caro-Kann after 3.Nc3 at 3e-5 (some 60 decision points) cached in
-under three hours, so that the Najdorf as Black, the hardest, fits in ten. The scout at every candidate is far
-from it, 200,000 nodes or more a point (2026-10-27); the club's data first is well within it, one explorer
-request and one search a point (phase 2). What the scout keeps, the moves the club has not played, sets the
-rest: if it stays large, a larger spot VM for the same vCPU-hours (once the search runs in parallel, the time
-divides by the vCPUs, about 3.5 from 32 to 112), and cheaper nodes, each lever measured against the scout's
-value as `branch` was (`my_choices` 1 or 2 first, my later moves multiplying the tree by about 3 each; depth 12
-past my horizon, fewer judged moves, a short horizon to sort the candidates before the full one).
-
-The risk is the cost of the scout: more than 12 hours per candidate at the full horizon on one vCPU (the first
-VM run), Stockfish taking 94% of the CPU, Python 4.5% and Lc0 2.4% (the scouts on the VM, 2026-10-26). The
-plan (2026-10-26, agreed), for what the scout keeps:
-
-1. **The search in two passes.** The tree's shape depends only on each position's evals (the moves judged, the
-   replies followed, my moves above the floor), not on the values backed up. So: an expansion level by level,
-   every search of a level sent at once (the policies, then the MultiPV of the judged moves at depth 14, then
-   the floors of my moves at 20: some 16 levels of 3 stages, hundreds of searches each), then the values backed
-   up in Python from the caches. A position is judged at a canonical p, so the result does not depend on the
-   order. Checked against the present search on 7.N1e2 at a short horizon.
-2. **A local pool** of single-threaded Stockfish: four on the Mac give more than one on four threads at depth 14.
-3. **A worker on a spot VM**: one ssh connection, JSON lines both ways (a position, its moves, the depth; the
-   evals back), a single-threaded Stockfish on every vCPU. The latency counts once a batch, not once a search.
-   The builder stays on the Mac with its caches: no merge, a preemption loses only the searches in flight; the
-   Mac kept awake (`caffeinate`), the connection resumed and the requests sent again. Lc0 stays in the builder
-   on the Mac (Metal): the policy comes first at each position, costs little, and its cache is there; every new
-   policy from one backend. ssh gives encryption and authentication with no port opened: no HTTP service, no
-   queue.
-4. **Then Python is the bottleneck**: about 1.3 cores for 30 engines, in one process. SQLite writes in one
-   transaction per batch, lighter handling of moves, a level's expansion over two processes if needed; Lc0 in
-   true batches if it ever limits (through UCI, one position per call; its Python bindings batch, 17 times
-   faster on Metal: [LAB.md](LAB.md), "Engines").
+The target: under 10 hours of caching per repertoire, the Caro-Kann after 3.Nc3 at 3e-5 in under three, so
+that the Najdorf as Black, the hardest, fits. The club's data is well within it (minutes on the Mac). If the
+model's share turns out large, the parallel search planned on 2026-10-26 ([LAB.md](LAB.md), "The parallel
+search"): two passes over the tree, a pool of single-threaded Stockfish, a worker on a spot VM over ssh, the
+builder and Lc0 on the Mac.
 
 ## 5. Redoing the repertoires, one at a time
 
@@ -112,8 +95,8 @@ with 2...e6, and the rest may change freely.
 
 ## 6. The trainer
 
-- My own positions with a low instinct first, the moves intuition will not find: a priority shown on the
-  Lines page, not imposed.
+- My own positions with a low instinct first, the moves intuition will not find (the hidden moves of phase 3):
+  a priority shown on the Lines page, not imposed.
 - From mid-November, the memory models fitted on the review log ([MEMORIZATION.md](MEMORIZATION.md), "Next").
 - The Lines page counts games twice at a transposition (display only).
 

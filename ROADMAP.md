@@ -43,7 +43,10 @@ fixed depths; no scout finished in 12 hours. The club's own scores rank the thre
 each rating band ([LAB.md](LAB.md), "The club's verdict first"). So the scan goes by the club's data
 (2026-10-27, agreed): at each decision point, my moves the club has played, by their score against the main
 move's, the floor kept; the scout only for the moves it has not played, once its cost (`my_choices` 1 and 2)
-is measured and it is calibrated against the club where the club has played.
+is measured and it is calibrated against the club where the club has played. `lab/screen.py` does the first
+part (2026-10-27): on the Caro-Kann, 54 decision points in 10 minutes, the test zone's deviations found
+([LAB.md](LAB.md), "The screen on the Caro-Kann"). Next: the backup along the backbone and the edges shrunk by
+their error.
 
 ## 3. Which opponent moves, and where lines end (lab)
 

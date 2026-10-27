@@ -468,6 +468,25 @@ little in the top band (8.Neg5 from 20 to 12.5): stronger opponents escape more 
   moves Stockfish's best above the floor, the model deeper, where the games run out.
 - **The caveats**: the players of a rare move often know it, as I will; blitz and rapid are mixed.
 
+### The screen on the Caro-Kann (2026-10-27, `lab/screen.py`)
+
+From 3.Nc3, 4.Nxe4, 5.Ng3 and 6.h4 given, the threshold 3e-5 (45,310 games), moves measured from 625 games:
+54 decision points, in 10 minutes on the Mac (the explorer's missing positions, Stockfish at depth 20 on the
+measured moves); `data/lab/screen/2026-10-27T1848.json`.
+
+- **It finds the test zone's deviations**: after 6.h4 h6, 7.Nh3 +3.7, 7.N1e2 +3.6 and 7.f4 +2.6 over the
+  masters' 7.Nf3; after 6.h4 h5, 7.Nh3 +5.1 and 7.N1e2 +5.0.
+- **The largest gain is elsewhere**: after 4...Nf6, 5.Ng5 scores 53.7% over 460,916 games against 50.9% for the
+  masters' 5.Nxf6+, +2.9 on 43% of the start's games (a gain of 1.2 points), its eval 47.2% (sound by two
+  points). After 4...Nd7, the masters' 5.Ng5 is the club's best too (58.6%); after 3...e6, 4.Nf3.
+- **Two things for the builder.** The decision points are nested: a deviation drops the points below it, and the
+  gains found after 7.Nf3 add to 7.Nf3's value (some 0.4 points from the start, about 4 points at 6...h6,
+  as much as 7.Nh3's edge). So a backup along the backbone: at each point my best move, the main move worth its
+  score plus the gains below it, each scaled by its share of the point. And the winner's curse: the best of
+  fifteen moves near 625 games is some 3.5 points up by noise alone (12.Kf1, +7.5 over 663 games). Each edge
+  shrunk by its error (empirical Bayes, the spread of true edges estimated from the data) rather than a bare
+  threshold.
+
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 
 Rare but sound White tries the lab should find, or explain why not:

@@ -299,7 +299,7 @@ around 0.07, the default since:
 A cut too coarse undervalues the line by two points: the replies it drops are the opponent's mistakes.
 My moves to the horizon cost the most (13, 61, 201 and 636 nodes for two to five of them, the model
 phase cut), about 22 nodes per position the model phase starts from: some 11,000 nodes, 3.5 to 7 hours,
-for one candidate at the full horizon on the Mac.
+for one candidate at the full horizon on the Mac (more: below, "The club's verdict first").
 
 `branch`, the same cut within my horizon, measured with three moves of mine and no model phase, at fixed
 depths (below, "Evals at fixed depths"; the first values, with the cache's mixed depths, were about 1.3 points
@@ -321,7 +321,8 @@ The club's own scores (the explorer cache, 1800-2499, blitz and rapid, the mover
 6.Neg5 63.6% (7,692 games) against 6.Bd3 50.7%; 7.Nh3 58.3% and 7.N1e2 58.2% against 7.Nf3 54.5% and 7.h5
 51.6%; 8.Neg5 72.3% (764 games) against 8.Ne5 64.5%. The scout overrates the size: 74 to 77% for 6.Neg5
 against 64% (the Lichess curve is not the club's, 6.Bd3's eval of 55% scores 50.7%; the short horizon counts
-8.Nxf7 Kxf7 at its eval). The players of a rare move often know it, which flatters its score.
+8.Nxf7 Kxf7 at its eval). The players of a rare move often know it, which flatters its score (as I will
+know mine).
 
 ### The floor alone (2026-10-26, my decision)
 
@@ -404,10 +405,68 @@ finds the backbone, and searches for deviations only at its decision points; the
   holds only what the drafts asked of the Sicilians. At 1e-5 the Sicilian 2...e6 lacks more positions than it
   has; the Najdorf as Black is probably above 150. Filling the gaps costs a few hundred to a few thousand
   requests, under an hour.
-- **The cost**: about 35,000 nodes per decision point (an estimate, before the first VM run measures it), and
-  about a million nodes a night on 32 vCPUs. At 1e-4 a night per repertoire; at 3e-5 two to three, more for
-  the Sicilians. The budget is under 10 hours of caching per repertoire, with room in the Caro-Kann and the
-  Rubinstein, since the Sicilians are the real test: the target is in [ROADMAP.md](ROADMAP.md), phase 4.
+- **The cost**: under 10 hours of caching per repertoire, with room in the Caro-Kann and the Rubinstein,
+  since the Sicilians are the real test (the target in [ROADMAP.md](ROADMAP.md), phase 4). The scout at every
+  candidate is far from it: 200,000 nodes or more a decision point (below, "The club's verdict first").
+
+## The club's verdict first (2026-10-27, agreed)
+
+The first VM run (2026-10-26, 12 hours on a spot c2d-highcpu-32, one candidate a vCPU, one Stockfish thread
+each, the code before ζ): no scout finished. Each had searched some 8,000 to 17,000 nodes (60,000 to 136,000
+new evals, about 430 a minute), past the 11,000 estimated for a candidate. A decision point and its dozen
+candidates cost 200,000 nodes or more at the full horizon; my later moves multiply the tree by about 3 each
+(`my_choices` 3). The run's caches are merged into the Mac's: 4.9 million evals, 510,000 policies (Lc0 on
+BLAS).
+
+Yet at a decision point the club has played what the scout predicts. At 3e-5 a decision point has 45,000
+games or more: each of my moves played 600 times has its score within ±2 points. And the club alone ranks
+first the deviations of the three test positions, the scout's acceptance criterion (ROADMAP phase 2):
+
+| Position | Move | Games | Club score | Stockfish | Mover |
+|---|---|---|---|---|---|
+| Caro-Kann 6.h4 h6 | 7.Nf3 (main) | 534,243 | 54.5 | 52.1 | 2092 |
+| | 7.h5 | 436,102 | 51.6 | 52.5 | 2041 |
+| | **7.Nh3** | 74,339 | **58.3** | 52.3 | 2144 |
+| | **7.N1e2** | 36,661 | **58.2** | 51.6 | 2124 |
+| | 7.f4 | 12,190 | 57.2 | 50.8 | 2157 |
+| Fort Knox 5...Bc6 | 6.Bd3 (main) | 321,079 | 50.7 | 54.7 | 2115 |
+| | **6.Neg5** | 7,692 | **63.6** | 50.6 | 2169 |
+| | 6.Ned2 | 2,879 | 56.7 | 53.7 | 2180 |
+| Rubinstein 7...b6 | 8.O-O (main) | 2,827 | 55.5 | 51.9 | 2154 |
+| | 8.Ne5 | 1,457 | 64.5 | 58.8 | 2204 |
+| | **8.Neg5** | 764 | **72.3** | 67.0 | 2214 |
+
+The club's score is the mover's, Stockfish's the eval after the move (the package cache, the Lichess curve);
+two moves the scout never judged come out: 7.f4 and 6.Ned2. "Mover" is the explorer's `averageRating`, the
+rating of the player who made the move (`LichessEntry::new_single` in lila-openingexplorer; a game's band is
+the midpoint of both ratings). The players of a deviation are some 50 points stronger, enough to explain its
+edge if their opponents were not. Within each band the gap nearly vanishes, and the edge stays (the explorer by
+band, 2026-10-27; the mover's rating against the main move's in brackets):
+
+| Edge over the main move, points | 1800-1999 | 2000-2199 | 2200-2499 |
+|---|---|---|---|
+| Caro-Kann 7.Nh3 | +4.6 (+23) | +3.9 (+12) | +3.5 (-1) |
+| Caro-Kann 7.N1e2 | +2.9 (+7) | +4.4 (+6) | +3.7 (+5) |
+| Caro-Kann 7.f4 | +3.2 (+17) | +3.3 (+9) | +2.3 (+6) |
+| Fort Knox 6.Neg5 | +11.7 (-1) | +14.3 (+20) | +12.5 (+19) |
+| Fort Knox 6.Ned2 | +3.3 (-9) | +4.7 (+20) | +8.2 (+46) |
+| Rubinstein 8.Neg5 | +20.0 (+10) | +19.1 (+30) | +12.5 (+7) |
+| Rubinstein 8.Ne5 | +5.3 (+28) | +11.6 (+20) | +6.0 (+12) |
+
+The overall gap came from the mix of bands: the deviations are played more in the upper ones. Twenty points of
+rating are worth 3 points of score at most, and less since Lichess pairs close ratings. The edges shrink a
+little in the top band (8.Neg5 from 20 to 12.5): stronger opponents escape more often.
+
+- **Measure where the club has played, model where it has not.** At each decision point, my moves the club
+  has played enough, by their score against the main move's (the eval's difference aside, once the club's
+  curve is fitted), Stockfish's floor at depth 20 kept. One explorer request (the backbone's) and one MultiPV
+  search a point: about an hour of the Mac a repertoire.
+- **The scout for what the club has not played**: a move Lc0 or Stockfish likes with few games. Before it, its
+  cost (`my_choices` 1 and 2, untried) and its calibration against the club where the club has played (the
+  run's candidates, on the Mac at a short horizon).
+- **After the deviation**, punishing until calm: the club's replies are data too while their games last, my
+  moves Stockfish's best above the floor, the model deeper, where the games run out.
+- **The caveats**: the players of a rare move often know it, as I will; blitz and rapid are mixed.
 
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 

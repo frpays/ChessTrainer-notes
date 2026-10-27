@@ -39,9 +39,11 @@ Accepted when, in three positions of the test zone, the scout given no candidate
 with the Nh5 cluster (Caro-Kann 6.h4 h6), 6.Neg5 (Fort Knox 5...Bc6) and 8.Neg5 (Rubinstein 7...b6), or ranks
 above them a move that holds up when I examine it (a better deviation is a find, not a failure). First run
 on a spot VM, 2026-10-26: 20 candidates in the three positions at the full horizon, before ζ and the evals at
-fixed depths ([LAB.md](LAB.md), "Evals at fixed depths"); then the head of each position again at fixed depths,
-ζ 0 and 0.2. Then the scan: my positions along the test zone's lines, a short horizon to sort the deviations,
-the full horizon for the best, ranked by their gain times my p.
+fixed depths; no scout finished in 12 hours. The club's own scores rank the three deviations first, within
+each rating band ([LAB.md](LAB.md), "The club's verdict first"). So the scan goes by the club's data
+(2026-10-27, agreed): at each decision point, my moves the club has played, by their score against the main
+move's, the floor kept; the scout only for the moves it has not played, once its cost (`my_choices` 1 and 2)
+is measured and it is calibrated against the club where the club has played.
 
 ## 3. Which opponent moves, and where lines end (lab)
 
@@ -62,16 +64,17 @@ Its first pass finds the backbone and its decision points exactly (2026-10-26, a
 backbone"): my moves fixed, the opponent's club moves above a threshold in n/Nt. The deviations are searched at
 the decision points only, the rest of the subtree cheaply. Fixing moves first shrinks the count, and the
 threshold can then go lower. The target: the Caro-Kann after 3.Nc3 at 3e-5 (some 60 decision points) cached in
-under three hours on the VM, so that the Najdorf as Black, the hardest, fits in ten. At the estimated 35,000
-nodes a point and a million a night on 32 vCPUs, that is about a factor 7: a larger spot VM for the same
-vCPU-hours (once the search runs in parallel, the time divides by the vCPUs, about 3.5 from 32 to 112), and
-cheaper nodes, each lever measured against the scout's value as `branch` was (depth 12 past my horizon, fewer
-judged moves, a short horizon to sort the candidates before the full one), and the searches of a decision point
-sharing the subtrees of the next ones. The first VM run measures the nodes per candidate first.
+under three hours, so that the Najdorf as Black, the hardest, fits in ten. The scout at every candidate is far
+from it, 200,000 nodes or more a point (2026-10-27); the club's data first is well within it, one explorer
+request and one search a point (phase 2). What the scout keeps, the moves the club has not played, sets the
+rest: if it stays large, a larger spot VM for the same vCPU-hours (once the search runs in parallel, the time
+divides by the vCPUs, about 3.5 from 32 to 112), and cheaper nodes, each lever measured against the scout's
+value as `branch` was (`my_choices` 1 or 2 first, my later moves multiplying the tree by about 3 each; depth 12
+past my horizon, fewer judged moves, a short horizon to sort the candidates before the full one).
 
-The risk is the cost: hours per candidate move at the full horizon on the Mac with the practical-model player
-(the ten minutes of the first prototype are past), Stockfish taking 94% of the CPU, Python 4.5% and Lc0 2.4%
-(the scouts on the VM, 2026-10-26). The plan (2026-10-26, agreed), after the first results of the scout:
+The risk is the cost of the scout: more than 12 hours per candidate at the full horizon on one vCPU (the first
+VM run), Stockfish taking 94% of the CPU, Python 4.5% and Lc0 2.4% (the scouts on the VM, 2026-10-26). The
+plan (2026-10-26, agreed), for what the scout keeps:
 
 1. **The search in two passes.** The tree's shape depends only on each position's evals (the moves judged, the
    replies followed, my moves above the floor), not on the values backed up. So: an expansion level by level,

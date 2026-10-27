@@ -66,7 +66,9 @@ After each move chosen, the lines (2026-10-27, my proposals; [LAB.md](LAB.md), "
   is worth one more move: its reach times the loss avoided, against the cost of a move to learn (not measured
   yet).
 
-Then a whole Caro-Kann and French Rubinstein drafted by the lab, compared with mine.
+Tried first on the Pin Variation of the Sicilian with 2...e6 (5...Bb4 6.e5), forcing and counter-intuitive
+on both sides (2026-10-27, my choice). Then a whole Caro-Kann and French Rubinstein drafted by the lab,
+compared with mine.
 
 ## 4. The new builder in `rep`
 

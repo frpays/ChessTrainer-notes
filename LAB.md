@@ -549,6 +549,19 @@ the club cannot measure:
 How much loss is worth one more move of a line is a weight, not a threshold: the reach times the loss avoided,
 against the cost of one more move to learn, still to be measured.
 
+**The test terrain: the Pin Variation** (2026-10-27, my choice): 2...e6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 Bb4 6.e5,
+forcing lines where the natural moves often fail. The explorer cache (the club, the mover's score) and the
+small network against Stockfish at depth 14:
+
+- **A trap the club does not punish**: after 6.e5, the natural 6...Ne4 (40% of the policy) loses 15 points,
+  yet scores 49% for Black over 22,543 games, against 46% for 6...Nd5, the best. 7.Qg4 is natural and best (78%)
+  and scores only 52%: after 7...Qa5 (a mistake, 11 points) Black scores 60% over 1,618 games, though White's
+  8.Qxg7 is natural and best too (42% for White over 711). The difficulty lies further on: a line to push.
+- **A hidden move worth learning**: after 6...Nd5 7.Qg4 Kf8 (natural and best), Stockfish's best 8.Bd3 has 3%
+  of the policy and scores 72% over 209 games, against 60% for the natural 8.Bd2.
+- **The club's mistakes after 7.Qg4**: 7...Nxc3 (13 points) 42%, 7...Bxc3+ 36%, 7...g6 45%, against 52% for
+  7...O-O; then 8.Bh6, natural and best, scores 49%.
+
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 
 Rare but sound White tries the lab should find, or explain why not:

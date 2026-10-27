@@ -34,21 +34,26 @@ At the decision points of the backbone, by the club's own scores (2026-10-27, ag
 - **The backbone**, from a start: the opponent's every club move whose position keeps n/Nt at or above a
   threshold (3e-5 by default), one move of mine at each of my positions (given in the spec, else the masters',
   2500+ blitz's, or the club's most played). Moves given in advance shrink the decision points (2026-10-26).
-- **At each decision point**, my moves the club has played enough (625 games: a score within ±2 points), by
-  their score against the main move's; Stockfish's floor kept (45% as White, 40% as Black, at depth 20).
+- **At each decision point**, my candidate moves by their prepared value (2026-10-27, [LAB.md](LAB.md), "The
+  prepared value"): my moves Stockfish's best, the opponent's as the club plays them (the model where it has
+  few games), five moves of mine, Stockfish at the leaves; Stockfish's floor kept (45% as White, 40% as Black,
+  at depth 20). The club's raw score is the club against the club and underrates the sharp lines a prepared
+  player wants (6.e5 in the Pin Variation): it finds the decision points and the opponent's moves, it does not
+  judge mine.
 - **Early deviations first** (2026-10-27, my decision): each further move of the main line gives the opponent
   the chance to deviate first, and a deviation's club score already counts every reply after it. Valuing the
   main move by the gains found below it ("nested points") is kept in mind, not adopted.
 
-`lab/screen.py` does it: the Caro-Kann after 3.Nc3, 54 decision points in 10 minutes; the Sicilian with 2...e6,
-81 in 27 minutes. It ranks first the three deviations of the test zone (Caro-Kann 6.h4 h6 7.Nh3 and 7.N1e2,
-Fort Knox 5...Bc6 6.Neg5, Rubinstein 7...b6 8.Neg5), the acceptance criterion. Left for the lab: each edge
-shrunk by its error (the best of many moves near 625 games is up by noise), and the reach along the tree
-instead of n over the start's games (the explorer counts the games of every move order).
+`lab/screen.py` finds the decision points (the Caro-Kann after 3.Nc3, 54 in 10 minutes; the Sicilian with
+2...e6, 81 in 27) and ranks my moves by the club's raw score: it found the three deviations of the test zone
+(Caro-Kann 6.h4 h6 7.Nh3 and 7.N1e2, Fort Knox 5...Bc6 6.Neg5, Rubinstein 7...b6 8.Neg5). Next, the prepared
+value in the lab (a prototype gives 6.e5 twelve points over 6.Bd3 in the Pin Variation, two to three minutes a
+candidate), its breadth measured, the candidates sorted first; the acceptance criterion again; the reach along
+the tree instead of n over the start's games (the explorer counts the games of every move order).
 
-The scout of `lab/scout.py` (the expectimax against the practical-model player) no longer decides: no
-candidate finished in 12 hours on a spot VM (2026-10-26). It is kept, if needed, for the moves the club has not
-played, at a far smaller cost (`my_choices` 1 or 2) and calibrated against the club where the club has played.
+The scout of `lab/scout.py` (the expectimax against the practical-model player, three moves of mine tried at
+each of my positions) did not finish a candidate in 12 hours on a spot VM (2026-10-26); the prepared value is
+its principle at one move of mine, the club as the opponent.
 
 ## 3. Which opponent moves, and where lines end (lab)
 
@@ -78,10 +83,14 @@ gives: a first pass for the backbone and my move at each decision point (phase 2
 each (phase 3), the model (Lc0's policy, Stockfish) where the club lacks games.
 
 The target: under 10 hours of caching per repertoire, the Caro-Kann after 3.Nc3 at 3e-5 in under three, so
-that the Najdorf as Black, the hardest, fits. The club's data is well within it (minutes on the Mac). If the
-model's share turns out large, the parallel search planned on 2026-10-26 ([LAB.md](LAB.md), "The parallel
-search"): two passes over the tree, a pool of single-threaded Stockfish, a worker on a spot VM over ssh, the
-builder and Lc0 on the Mac.
+that the Najdorf as Black, the hardest, fits. The prepared value at every candidate would take some 25 hours
+on the Mac: the candidates sorted first, a few per point, and the parallel search planned on 2026-10-26
+([LAB.md](LAB.md), "The parallel search"): a pool of single-threaded Stockfish, a worker on a spot VM over
+ssh, the builder and Lc0 on the Mac.
+
+The moves are marked as good too (2026-10-27, my decision; [LAB.md](LAB.md), "Good moves"): □ an only move,
+! a good move intuition does not find, !! a hidden one, !? my deviations; the mistakes as before. Few marks,
+on one score: what intuition loses at the position, its levels from its distribution over a repertoire.
 
 ## 5. Redoing the repertoires, one at a time
 

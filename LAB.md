@@ -562,6 +562,54 @@ small network against Stockfish at depth 14:
 - **The club's mistakes after 7.Qg4**: 7...Nxc3 (13 points) 42%, 7...Bxc3+ 36%, 7...g6 45%, against 52% for
   7...O-O; then 8.Bh6, natural and best, scores 49%.
 
+## The prepared value (2026-10-27, my critique, agreed)
+
+The club's score of a move is the club against the club: its players of my side do not know the line. In a
+sharp line it badly underrates the move for a prepared player, the lines I want. After the Pin Variation's
+6.e5, 6...Ne4 loses 15 points yet scores 49% for Black, and Black is lost if White is precise for five moves;
+the raw statistics would advise against 6.e5, which I want in my repertoire to punish Black. The scout's
+principle was right (me precise, the opponent as the club plays); its cost was wrong.
+
+So a move of mine is valued by its prepared value: my moves Stockfish's best (depth 14), the opponent's the
+club's shares blended with the small network's policy where the club has few games (the practical player's N,
+6.2 prior games), a reply weighing under 10% at its eval, five moves of mine, then Stockfish at depth 20. One
+move of mine at each of my positions, where the scout tried three: the tree is some twenty nodes of the
+opponent's, not thousands. A prototype in the scratchpad, after 5...Bb4 (2026-10-27):
+
+| Move | Prepared | Eval after it | Club | Nodes, time |
+|---|---|---|---|---|
+| 6.e5 | 77.9 | 57.2 | 53.6 | 18, 132 s |
+| 6.Bd3 | 65.8 | 51.7 | 50.2 | 17, 158 s |
+
+Preparation gives 6.e5 twelve points over 6.Bd3, where the club gives it 3.4; its likeliest line is the queen
+sacrifice, 6...Nd5 7.Qg4 g6 8.Nb5 a6 9.Qxb4 Nxb4 10.Nd6+. The values are high in absolute terms (Stockfish's
+evals on the Lichess curve, where the club converts less) and the breadth (10%) is to be measured as `branch`
+was; the ranking is what counts. The club's raw score keeps the decision points and the opponent's moves.
+
+The cost: two to three minutes per candidate on the Mac, the explorer asked for the positions it lacked. At a
+dozen candidates and sixty decision points, some 25 hours: the candidates sorted first (those above the floor,
+the club's measured moves, the policy's natural one and Stockfish's best: a few per point), and the parallel
+search (above) for the rest.
+
+### Good moves, from the policy and Stockfish (2026-10-27, my decision; the score to settle)
+
+I had said there are no good moves in chess, only bad ones, so only mistakes were marked. With the small
+network's policy against Stockfish, a good move has a meaning: one intuition does not find. Not to be abused,
+the marks rest on one score: what intuition loses at the position, E = Σ p(m) · loss(m) over the policy's
+moves, in points (1 - instinct, in points rather than accuracy). A natural recapture has an E near 0; 13.O-O-O
+in the line of the queen sacrifice about 30 (13.c4 and 13.Bc4, 23% of the policy each, lose 45 and 50 points).
+The mark depends on the move:
+
+- **□**: an only move (every other move loses a mistake or more, 10 points) where E is high: not every forced
+  recapture.
+- **!**: Stockfish's best where E is high and the policy gives it little.
+- **!!**: the same, the move hidden (under 5% of the policy, the index's hidden move): 9.Qxb4 (0%).
+- **!?**: my deviations, the sound and inferior moves chosen where the opponent errs: Caro-Kann 7.N1e2.
+
+The levels of E are set so the marks stay rare: from its distribution over my moves in a repertoire (the
+Caro-Kann first), with E of 10 or more, a mistake lost on average by intuition, as the anchor. The marked
+moves, mine, are the ones to learn first.
+
 ## Theory reconnaissance (2026-10-25, web sources, not yet checked by engine)
 
 Rare but sound White tries the lab should find, or explain why not:

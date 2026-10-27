@@ -112,7 +112,9 @@ tolerance was proposed and set aside.
 
 - Ideas and plans in words, a few moves on the board; no long variations in comments.
 - Speak like a player: "wins a piece", not "wins a bishop" after exchanges; claim only gains visible in the
-  moves shown. Only mistakes are marked; no "!" on an obvious recapture.
+  moves shown. Only mistakes are marked; no "!" on an obvious recapture. The new builder marks good moves too,
+  from the small network's policy against Stockfish: □, !, !! and !? (2026-10-27, [LAB.md](LAB.md), "Good
+  moves").
 - Published studies carry no statistics and no centipawns: the standard symbols (=, ⩲, ±, +−) on the last
   move of a line, and words such as "Mating attack" (`repertoire/style.yaml`, applied at push; the PGN files
   keep everything). Notes written in the spec say it in words too: "a common accident in club games", not

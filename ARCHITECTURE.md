@@ -43,6 +43,13 @@ Tests: `tools/tests/`, unittest classes that pytest runs too (`uv run pytest`), 
 explorer and Lichess. `tests/sandbox.py`, imported first by every test module, points the repository and the
 data folder at temporary folders and blocks the network and the engine.
 
+Stockfish from Python: `tools/native/sftree/` builds Stockfish 19 as a Python module, `sftree` (pybind11, macOS
+on Apple silicon; `make install` there). It searches as the UCI engine does, with the same nodes, then reads its
+transposition table position by position, as Steinar Gunderson's Remoteglot does: for a position and for each of
+its moves, the stored best move, depth, static evaluation and value. The value is exact on the principal variation
+only; elsewhere it is a bound, since Stockfish proves a move worse without valuing it. Its tests search, so they
+run with `make test` there, not in `tests/` (2026-10-28).
+
 ## From a spec to a study and a training
 
 1. **Spec** (`repertoire/white/<name>.spec`): start position, thresholds, my imposed moves (`[policy]`),
